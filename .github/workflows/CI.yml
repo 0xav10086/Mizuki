@@ -64,3 +64,19 @@ jobs:
         run: pnpm astro build
         env:
           ENABLE_CONTENT_SYNC: false
+  deploy:
+    name: Deploy to VPS
+    needs: build # 确保构建成功后再部署
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /path/to/your/blog # 替换为你博客在 VPS 上的路径
+            git pull origin master
+            pnpm install --frozen-lockfile
+            pnpm astro build
