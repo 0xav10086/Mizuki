@@ -66,17 +66,18 @@ jobs:
           ENABLE_CONTENT_SYNC: false
   deploy:
     name: Deploy to VPS
-    needs: build # 确保构建成功后再部署
+    # 因为你本地已经 build 好了，甚至可以不需要 needs: build，直接跑这一步
     runs-on: ubuntu-latest
     steps:
-      - name: SSH Remote Commands
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS via rsync
+        uses: Burnett01/rsync-deployments@7.0.1 # 一个简单好用的 rsync 封装
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /path/to/your/blog # 替换为你博客在 VPS 上的路径
-            git pull origin master
-            pnpm install --frozen-lockfile
-            pnpm astro build
+          switches: -avzr --delete  # -a 同步属性, -v 显示过程, -z 压缩, --delete 删除目标目录多余文件
+          path: dist/               # 你的本地构建目录
+          remote_path: /var/www/blog # 【重要】改为你 VPS 上 Nginx 指向的实际目录
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
