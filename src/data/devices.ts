@@ -18,22 +18,21 @@ export type DeviceCategory = {
 export const devicesData: DeviceCategory = {
 	OnePlus: [
 		{
-			name: "OnePlus 13T",
-			image: "/images/device/oneplus13t.png",
-			specs: "Gray / 16G + 1TB",
-			description:
-				"Flagship performance, Hasselblad imaging, 80W SuperVOOC.",
-			link: "https://www.oneplus.com/cn/13t",
+			name: "OnePlus Ace 5 Pro",
+			image: "/images/device/ace-5-pro.png",
+			specs: "Gray / 16G + 256GB",
+			description: "一加 Ace 5 Pro\n" + "性能凶猛 快人一代",
+			link: "https://www.oneplus.com/cn/ace-5-pro",
 		},
 	],
 	Router: [
 		{
-			name: "GL-MT3000",
-			image: "/images/device/mt3000.png",
-			specs: "1000Mbps / 2.5G",
+			name: "Xiaomi-BE3600",
+			image: "/images/device/be3600.png",
+			specs: "1000Mbps / 1000Mbps",
 			description:
-				"Portable WiFi 6 router suitable for business trips and home use.",
-			link: "https://www.gl-inet.cn/products/gl-mt3000/",
+				"新一代 WiFi7，疾速超乎现象",
+			link: "https://www.mi.com/shop/buy/detail?product_id=19845&cfrom=search",
 		},
 	],
 };
