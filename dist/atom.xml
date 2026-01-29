@@ -5,1079 +5,422 @@
   <link href="https://0xav10086.space/" rel="alternate" type="text/html"/>
   <link href="https://0xav10086.space/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://0xav10086.space/</id>
-  <updated>2026-01-28T16:06:15.674Z</updated>
+  <updated>2026-01-29T10:28:15.244Z</updated>
   <language>zh_CN</language>
   <entry>
-    <title>Markdown Tutorial</title>
-    <link href="https://0xav10086.space/posts/markdown-tutorial/" rel="alternate" type="text/html"/>
-    <id>https://0xav10086.space/posts/markdown-tutorial/</id>
-    <published>2025-01-20T00:00:00.000Z</published>
-    <updated>2025-01-20T00:00:00.000Z</updated>
-    <summary>A simple example of a Markdown blog post.</summary>
-    <content type="html"><![CDATA[<h1>Markdown Tutorial</h1>
-<p>A markdown example shows how to write a markdown file. This document integrates core syntax and extensions (GMF).</p>
-<ul>
-<li><a href="#block-elements">Block Elements</a>
-<ul>
-<li><a href="#paragraphs-and-line-breaks">Paragraphs and Line Breaks</a></li>
-<li><a href="#headers">Headers</a></li>
-<li><a href="#blockquotes">Blockquotes</a></li>
-<li><a href="#lists">Lists</a></li>
-<li><a href="#code-blocks">Code Blocks</a></li>
-<li><a href="#horizontal-rules">Horizontal Rules</a></li>
-<li><a href="#table">Table</a></li>
-</ul>
-</li>
-<li><a href="#span-elements">Span Elements</a>
-<ul>
-<li><a href="#links">Links</a></li>
-<li><a href="#emphasis">Emphasis</a></li>
-<li><a href="#code">Code</a></li>
-<li><a href="#images">Images</a></li>
-<li><a href="#strikethrough">Strikethrough</a></li>
-</ul>
-</li>
-<li><a href="#miscellaneous">Miscellaneous</a>
-<ul>
-<li><a href="#automatic-links">Automatic Links</a></li>
-<li><a href="#backslash-escapes">Backslash Escapes</a></li>
-</ul>
-</li>
-<li><a href="#inline-html">Inline HTML</a></li>
-</ul>
-<h2>Block Elements</h2>
-<h3>Paragraphs and Line Breaks</h3>
-<h4>Paragraphs</h4>
-<p>HTML Tag: <code>&lt;p&gt;</code></p>
-<p>One or more blank lines. (A blank line is a line containing nothing but <strong>spaces</strong> or <strong>tabs</strong> is considered blank.)</p>
-<p>Code:</p>
-<pre><code>This will be
-inline.
-
-This is second paragraph.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>This will be
-inline.</p>
-<p>This is second paragraph.</p>
-<hr />
-<h4>Line Breaks</h4>
-<p>HTML Tag: <code>&lt;br /&gt;</code></p>
-<p>End a line with <strong>two or more spaces</strong>.</p>
-<p>Code:</p>
-<pre><code>This will be not
-inline.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>This will be not<br />
-inline.</p>
-<hr />
-<h3>Headers</h3>
-<p>Markdown supports two styles of headers, Setext and atx.</p>
-<h4>Setext</h4>
-<p>HTML Tags: <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code></p>
-<p>"Underlined" using <strong>equal signs (=)</strong> as <code>&lt;h1&gt;</code> and <strong>dashes (-)</strong> as <code>&lt;h2&gt;</code> in any number.</p>
-<p>Code:</p>
-<pre><code>This is an H1
-=============
-This is an H2
--------------
-</code></pre>
-<p>Preview:</p>
-<hr />
-<h1>This is an H1</h1>
-<h2>This is an H2</h2>
-<hr />
-<h4>atx</h4>
-<p>HTML Tags: <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code>, <code>&lt;h6&gt;</code></p>
-<p>Uses 1-6 <strong>hash characters (#)</strong> at the start of the line, corresponding to <code>&lt;h1&gt;</code> - <code>&lt;h6&gt;</code>.</p>
-<p>Code:</p>
-<pre><code># This is an H1
-## This is an H2
-###### This is an H6
-</code></pre>
-<p>Preview:</p>
-<hr />
-<h1>This is an H1</h1>
-<h2>This is an H2</h2>
-<h6>This is an H6</h6>
-<hr />
-<p>Optionally, you may "close" atx-style headers. The closing hashes <strong>don't need to match</strong> the number of hashes used to open the header.</p>
-<p>Code:</p>
-<pre><code># This is an H1 #
-## This is an H2 ##
-### This is an H3 ######
-</code></pre>
-<p>Preview:</p>
-<hr />
-<h1>This is an H1</h1>
-<h2>This is an H2</h2>
-<h3>This is an H3</h3>
-<hr />
-<h3>Blockquotes</h3>
-<p>HTML Tag: <code>&lt;blockquote&gt;</code></p>
-<p>Markdown uses email-style <strong>&gt;</strong> characters for blockquoting. It looks best if you hard wrap the text and put a &gt; before every line.</p>
-<p>Code:</p>
-<pre><code>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
-&gt; consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
-&gt; Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
-&gt;
-&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
-&gt; id sem consectetuer libero luctus adipiscing.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<blockquote>
-<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
-Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
-<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
-id sem consectetuer libero luctus adipiscing.</p>
-</blockquote>
-<hr />
-<p>Markdown allows you to be lazy and only put the &gt; before the first line of a hard-wrapped paragraph.</p>
-<p>Code:</p>
-<pre><code>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
-Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
-
-&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
-id sem consectetuer libero luctus adipiscing.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<blockquote>
-<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
-consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
-Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
-</blockquote>
-<blockquote>
-<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
-id sem consectetuer libero luctus adipiscing.</p>
-</blockquote>
-<hr />
-<p>Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by adding additional levels of &gt;.</p>
-<p>Code:</p>
-<pre><code>&gt; This is the first level of quoting.
-&gt;
-&gt; &gt; This is nested blockquote.
-&gt;
-&gt; Back to the first level.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<blockquote>
-<p>This is the first level of quoting.</p>
-<blockquote>
-<p>This is nested blockquote.</p>
-</blockquote>
-<p>Back to the first level.</p>
-</blockquote>
-<hr />
-<p>Blockquotes can contain other Markdown elements, including headers, lists, and code blocks.</p>
-<p>Code:</p>
-<pre><code>&gt; ## This is a header.
-&gt;
-&gt; 1.   This is the first list item.
-&gt; 2.   This is the second list item.
-&gt;
-&gt; Here's some example code:
-&gt;
-&gt;     return shell_exec("echo $input | $markdown_script");
-</code></pre>
-<p>Preview:</p>
-<hr />
-<blockquote>
-<h2>This is a header.</h2>
+    <title>how-to-configuration-HTTPS</title>
+    <link href="https://0xav10086.space/posts/how-to-configuration-https/" rel="alternate" type="text/html"/>
+    <id>https://0xav10086.space/posts/how-to-configuration-https/</id>
+    <published>2026-01-29T00:00:00.000Z</published>
+    <updated>2026-01-29T00:00:00.000Z</updated>
+    <summary>这个教程将会教你如何配置HTTPS。</summary>
+    <content type="html"><![CDATA[<h2>第一步：获取 Cloudflare 名称服务器</h2>
+<p>在操作阿里云之前，请确保你已经：</p>
 <ol>
-<li>This is the first list item.</li>
-<li>This is the second list item.</li>
-</ol>
-<p>Here's some example code:</p>
-<pre><code>return shell_exec("echo $input | $markdown_script");
-</code></pre>
-</blockquote>
-<hr />
-<h3>Lists</h3>
-<p>Markdown supports ordered (numbered) and unordered (bulleted) lists.</p>
-<h4>Unordered</h4>
-<p>HTML Tag: <code>&lt;ul&gt;</code></p>
-<p>Unordered lists use <strong>asterisks (*)</strong>, <strong>pluses (+)</strong>, and <strong>hyphens (-)</strong>.</p>
-<p>Code:</p>
-<pre><code>*   Red
-*   Green
-*   Blue
-</code></pre>
-<p>Preview:</p>
-<hr />
-<ul>
-<li>Red</li>
-<li>Green</li>
-<li>Blue</li>
-</ul>
-<hr />
-<p>is equivalent to:</p>
-<p>Code:</p>
-<pre><code>+   Red
-+   Green
-+   Blue
-</code></pre>
-<p>and:</p>
-<p>Code:</p>
-<pre><code>-   Red
--   Green
--   Blue
-</code></pre>
-<h4>Ordered</h4>
-<p>HTML Tag: <code>&lt;ol&gt;</code></p>
-<p>Ordered lists use numbers followed by periods:</p>
-<p>Code:</p>
-<pre><code>1.  Bird
-2.  McHale
-3.  Parish
-</code></pre>
-<p>Preview:</p>
-<hr />
-<ol>
-<li>Bird</li>
-<li>McHale</li>
-<li>Parish</li>
+<li>
+<p>在 <a href="https://dash.cloudflare.com/">Cloudflare 官网</a> 点击 <strong>Add a Site</strong> 并输入你的域名。</p>
+</li>
+<li>
+<p>选择订阅计划（通常选 <strong>Free</strong> 即可）。</p>
+</li>
+<li>
+<p>扫描完成后，Cloudflare 会提供两个类似 <code>lina.ns.cloudflare.com</code> 和 <code>theo.ns.cloudflare.com</code> 的地址。<strong>请复制并保存这两个地址。</strong></p>
+</li>
 </ol>
 <hr />
-<p>It's possible to trigger an ordered list by accident, by writing something like this:</p>
-<p>Code:</p>
-<pre><code>1986. What a great season.
-</code></pre>
-<p>Preview:</p>
-<hr />
+<h2>第二步：在阿里云修改 DNS 设置</h2>
+<p>由于阿里云控制台经常更新，这里是最新的导航路径：</p>
 <ol>
-<li>What a great season.</li>
-</ol>
-<hr />
-<p>You can <strong>backslash-escape (\)</strong> the period:</p>
-<p>Code:</p>
-<pre><code>1986\. What a great season.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>1986. What a great season.</p>
-<hr />
-<h4>Indented</h4>
-<h5>Blockquote</h5>
-<p>To put a blockquote within a list item, the blockquote's &gt; delimiters need to be indented:</p>
-<p>Code:</p>
-<pre><code>*   A list item with a blockquote:
-
-    &gt; This is a blockquote
-    &gt; inside a list item.
-</code></pre>
-<p>Preview:</p>
-<hr />
+<li>
+<p><strong>登录控制台</strong>：进入 <a href="https://dc.console.aliyun.com/">阿里云域名控制台</a>。</p>
+</li>
+<li>
+<p><strong>定位域名</strong>：在“域名列表”中找到你想要设置的域名。</p>
+</li>
+<li>
+<p><strong>进入管理</strong>：点击该域名右侧操作列的 <strong>管理</strong> 按钮。</p>
+</li>
+<li>
+<p><strong>左侧菜单</strong>：在左侧导航栏中，依次点击 <strong>DNS 管理</strong> &gt; <strong>DNS 修改</strong>。</p>
+</li>
+<li>
+<p><strong>修改服务器</strong>：</p>
 <ul>
 <li>
-<p>A list item with a blockquote:</p>
-<blockquote>
-<p>This is a blockquote
-inside a list item.</p>
-</blockquote>
+<p>点击页面上方的 <strong>修改 DNS 服务器</strong>。</p>
+</li>
+<li>
+<p>在弹出的输入框中，删除原有的阿里云 DNS 地址。</p>
+</li>
+<li>
+<p>填入 Cloudflare 给你的那两个名称服务器地址（一次填一个，通常有两个框）。</p>
 </li>
 </ul>
+</li>
+<li>
+<p><strong>保存验证</strong>：点击 <strong>确认</strong>。系统可能会要求你进行手机验证码或身份验证，完成后提交即可。</p>
+</li>
+</ol>
+<p>修改后的DNS服务器如下图所示：
+<img src=".%5CResource%5C20260129012443.png" alt="w-50%" /></p>
 <hr />
-<h5>Code Block</h5>
-<p>To put a code block within a list item, the code block needs to be indented twice — <strong>8 spaces</strong> or <strong>two tabs</strong>:</p>
-<p>Code:</p>
-<pre><code>*   A list item with a code block:
-
-        &lt;code goes here&gt;
-</code></pre>
-<p>Preview:</p>
-<hr />
+<h2>第三步：等待生效</h2>
 <ul>
 <li>
-<p>A list item with a code block:</p>
-<pre><code>&lt;code goes here&gt;
-</code></pre>
+<p><strong>生效时间</strong>：修改 DNS 服务器后，全球同步通常需要 <strong>几分钟到 48 小时</strong> 不等（大部分情况下 10 分钟内生效）。</p>
+</li>
+<li>
+<p><strong>检查状态</strong>：回到 Cloudflare 控制台，点击 <strong>Check nameservers</strong>。当 Cloudflare 显示 "Great news! Cloudflare is now protecting your site" 时，说明设置成功。</p>
 </li>
 </ul>
 <hr />
-<h5>Nested List</h5>
-<p>Code:</p>
-<pre><code>* A
-  * A1
-  * A2
-* B
-* C
-</code></pre>
-<p>Preview:</p>
-<hr />
+<h3>💡 核心注意事项</h3>
 <ul>
-<li>A
-<ul>
-<li>A1</li>
-<li>A2</li>
-</ul>
+<li>
+<p><strong>原解析记录</strong>：在修改 DNS 之前，确保 Cloudflare 已经正确同步（扫描）了你之前的 A 记录、CNAME 记录等。如果没同步完整，手动在 Cloudflare 中添加，否则会导致网站暂时无法访问。</p>
 </li>
-<li>B</li>
-<li>C</li>
+<li>
+<p><strong>DNSSEC</strong>：如果你在阿里云开启了 DNSSEC 保护，<strong>必须先在阿里云关闭它</strong>，否则修改 DNS 服务器会导致解析彻底中断。</p>
+</li>
 </ul>
+<p>配置之后的Cloudflare的DNS记录如下图所示：</p>
+<p><img src=".%5CResource%5C20260129012215.png" alt="w-50%" /></p>
+<p>为了支持 HTTPS，最稳妥且主流的方法是先配置 HTTP，然后使用 <strong>Certbot (Let's Encrypt)</strong> 自动获取证书并升级到 HTTPS。</p>
 <hr />
-<h3>Code Blocks</h3>
-<p>HTML Tag: <code>&lt;pre&gt;</code></p>
-<p>Indent every line of the block by at least <strong>4 spaces</strong> or <strong>1 tab</strong>.</p>
-<p>Code:</p>
-<pre><code>This is a normal paragraph:
+<h2>第四步：创建 Nginx 配置文件</h2>
+<p>在 Ubuntu/Debian 系统上，建议为每个站点创建独立的配置文件。执行以下命令：</p>
+<pre><code># 创建并编辑配置文件
+nano /etc/nginx/sites-available/0xav10086.conf
+</code></pre>
+<p>将以下内容粘贴进去（注意替换 <code>dash</code> 的代理配置）：</p>
+<pre><code># 1. 博客主站 (静态文件)
+server {
+    listen 80;
+    server_name www.0xav10086.space 0xav10086.space;
 
-    This is a code block.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>This is a normal paragraph:</p>
-<pre><code>This is a code block.
-</code></pre>
-<hr />
-<p>A code block continues until it reaches a line that is not indented (or the end of the article).</p>
-<p>Within a code block, <strong><em>ampersands (&amp;)</em></strong> and angle <strong>brackets (&lt; and &gt;)</strong> are automatically converted into HTML entities.</p>
-<p>Code:</p>
-<pre><code>    &lt;div class="footer"&gt;
-        &amp;copy; 2004 Foo Corporation
-    &lt;/div&gt;
-</code></pre>
-<p>Preview:</p>
-<hr />
-<pre><code>&lt;div class="footer"&gt;
-    &amp;copy; 2004 Foo Corporation
-&lt;/div&gt;
-</code></pre>
-<hr />
-<p>Following sections Fenced Code Blocks and Syntax Highlighting are extensions, you can use the other way to write the code block.</p>
-<h4>Fenced Code Blocks</h4>
-<p>Just wrap your code in <code>```</code> (as shown below) and you won't need to indent it by four spaces.</p>
-<p>Code:</p>
-<pre><code>Here's an example:
+    root /var/www/blog;
+    index index.html;
 
-```
-function test() {
-  console.log("notice the blank line before this function?");
+    location / {
+        # 针对 Astro 等前端框架，优先匹配文件，匹配不到则返回 404
+        try_files $uri $uri/ =404;
+    }
 }
-```
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>Here's an example:</p>
-<pre><code>function test() {
-  console.log("notice the blank line before this function?");
+
+# 2. Dash 子域名 (反向代理)
+server {
+    listen 80;
+    server_name dash.0xav10086.space;
+
+    location / {
+        proxy_pass http://127.0.0.1:8686;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 }
 </code></pre>
 <hr />
-<h4>Syntax Highlighting</h4>
-<p>In your fenced block, add an optional language identifier and we'll run it through syntax highlighting (<a href="https://github.com/github/linguist/blob/master/lib/linguist/languages.yml">Support Languages</a>).</p>
-<p>Code:</p>
-<pre><code>```ruby
-require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
-```
+<h2>第五步：启用配置并测试</h2>
+<ol>
+<li>
+<p><strong>建立软链接</strong>以启用配置：</p>
+<pre><code>ln -s /etc/nginx/sites-available/0xav10086.conf /etc/nginx/sites-enabled/
 </code></pre>
-<p>Preview:</p>
-<hr />
-<pre><code>require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
+</li>
+<li>
+<p><strong>测试 Nginx 语法</strong>是否正确：</p>
+<pre><code>nginx -t
 </code></pre>
-<hr />
-<h3>Horizontal Rules</h3>
-<p>HTML Tag: <code>&lt;hr /&gt;</code>
-Places <strong>three or more hyphens (-), asterisks (*), or underscores (_)</strong> on a line by themselves. You may use spaces between the hyphens or asterisks.</p>
-<p>Code:</p>
-<pre><code>* * *
-***
-*****
-- - -
----------------------------------------
-___
+<p>如果显示 <code>syntax is ok</code> 和 <code>test is successful</code>，则重启 Nginx：</p>
+<pre><code>systemctl restart nginx
 </code></pre>
-<p>Preview:</p>
+</li>
+</ol>
 <hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<hr />
-<h3>Table</h3>
-<p>HTML Tag: <code>&lt;table&gt;</code></p>
-<p>It's an extension.</p>
-<p>Separates column by <strong>pipe (|)</strong> and header by <strong>dashes (-)</strong>, and uses <strong>colon (:)</strong> for alignment.</p>
-<p>The outer <strong>pipes (|)</strong> and alignment are optional. There are <strong>3 delimiters</strong> each cell at least for separating header.</p>
-<p>Code:</p>
-<pre><code>| Left | Center | Right |
-|:-----|:------:|------:|
-|aaa   |bbb     |ccc    |
-|ddd   |eee     |fff    |
-
- A | B
----|---
-123|456
-
-
-A |B
---|--
-12|45
+<h2>第六步： 配置 HTTPS (SSL 证书)</h2>
+<p>我们使用 Certbot 来自动化这个过程，它会自动修改你的 Nginx 文件并添加重定向。</p>
+<ol>
+<li>
+<p><strong>安装 Certbot</strong>：</p>
+<pre><code>apt update
+apt install certbot python3-certbot-nginx -y
 </code></pre>
-<p>Preview:</p>
-<hr />
-<table>
-<thead>
-<tr>
-<th>Left</th>
-<th>Center</th>
-<th>Right</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>aaa</td>
-<td>bbb</td>
-<td>ccc</td>
-</tr>
-<tr>
-<td>ddd</td>
-<td>eee</td>
-<td>fff</td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th>A</th>
-<th>B</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>123</td>
-<td>456</td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th>A</th>
-<th>B</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>12</td>
-<td>45</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2>Span Elements</h2>
-<h3>Links</h3>
-<p>HTML Tag: <code>&lt;a&gt;</code></p>
-<p>Markdown supports two style of links: inline and reference.</p>
-<h4>Inline</h4>
-<p>Inline link format like this: <code>[Link Text](URL "Title")</code></p>
-<p>Title is optional.</p>
-<p>Code:</p>
-<pre><code>This is [an example](http://example.com/ "Title") inline link.
-
-[This link](http://example.net/) has no title attribute.
+</li>
+<li>
+<p><strong>获取并配置证书</strong>：</p>
+<p>执行以下命令，Certbot 会自动识别你配置文件里的域名：</p>
+<pre><code>certbot --nginx -d 0xav10086.space -d www.0xav10086.space -d dash.0xav10086.space
 </code></pre>
-<p>Preview:</p>
-<hr />
-<p>This is <a href="http://example.com/">an example</a> inline link.</p>
-<p><a href="http://example.net/">This link</a> has no title attribute.</p>
-<hr />
-<p>If you're referring to a local resource on the same server, you can use relative paths:</p>
-<p>Code:</p>
-<pre><code>See my [About](/about/) page for details.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>See my <a href="/about/">About</a> page for details.</p>
-<hr />
-<h4>Reference</h4>
-<p>You could predefine link references. Format like this: <code>[id]: URL "Title"</code></p>
-<p>Title is also optional. And the you refer the link, format like this: <code>[Link Text][id]</code></p>
-<p>Code:</p>
-<pre><code>[id]: http://example.com/  "Optional Title Here"
-This is [an example][id] reference-style link.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>This is <a href="http://example.com/">an example</a> reference-style link.</p>
-<hr />
-<p>That is:</p>
 <ul>
-<li>Square brackets containing the link identifier (<strong>not case sensitive</strong>, optionally indented from the left margin using up to three spaces);</li>
-<li>followed by a colon;</li>
-<li>followed by one or more spaces (or tabs);</li>
-<li>followed by the URL for the link;</li>
-<li>The link URL may, optionally, be surrounded by angle brackets.</li>
-<li>optionally followed by a title attribute for the link, enclosed in double or single quotes, or enclosed in parentheses.</li>
+<li>
+<p><strong>提示 1</strong>: 会询问你的邮箱，用于接收证书过期提醒。</p>
+</li>
+<li>
+<p><strong>提示 2</strong>: 会询问是否自动将 HTTP 重定向到 HTTPS，建议选择 <strong>2 (Redirect)</strong>。</p>
+</li>
 </ul>
-<p>The following three link definitions are equivalent:</p>
-<p>Code:</p>
-<pre><code>[foo]: http://example.com/  "Optional Title Here"
-[foo]: http://example.com/  'Optional Title Here'
-[foo]: http://example.com/  (Optional Title Here)
-[foo]: &lt;http://example.com/&gt;  "Optional Title Here"
-</code></pre>
-<p>Uses an empty set of square brackets, the link text itself is used as the name.</p>
-<p>Code:</p>
-<pre><code>[Google]: http://google.com/
-[Google][]
-</code></pre>
-<p>Preview:</p>
+</li>
+</ol>
 <hr />
-<p><a href="http://google.com/">Google</a></p>
-<hr />
-<h3>Emphasis</h3>
-<p>HTML Tags: <code>&lt;em&gt;</code>, <code>&lt;strong&gt;</code></p>
-<p>Markdown treats <strong>asterisks (*)</strong> and <strong>underscores (_)</strong> as indicators of emphasis. <strong>One delimiter</strong> will be <code>&lt;em&gt;</code>; *<em>double delimiters</em> will be <code>&lt;strong&gt;</code>.</p>
-<p>Code:</p>
-<pre><code>*single asterisks*
-
-_single underscores_
-
-**double asterisks**
-
-__double underscores__
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p><em>single asterisks</em></p>
-<p><em>single underscores</em></p>
-<p><strong>double asterisks</strong></p>
-<p><strong>double underscores</strong></p>
-<hr />
-<p>But if you surround an * or _ with spaces, it'll be treated as a literal asterisk or underscore.</p>
-<p>You can backslash escape it:</p>
-<p>Code:</p>
-<pre><code>\*this text is surrounded by literal asterisks\*
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>*this text is surrounded by literal asterisks*</p>
-<hr />
-<h3>Code</h3>
-<p>HTML Tag: <code>&lt;code&gt;</code></p>
-<p>Wraps it with <strong>backtick quotes (`)</strong>.</p>
-<p>Code:</p>
-<pre><code>Use the `printf()` function.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>Use the <code>printf()</code> function.</p>
-<hr />
-<p>To include a literal backtick character within a code span, you can use <strong>multiple backticks</strong> as the opening and closing delimiters:</p>
-<p>Code:</p>
-<pre><code>``There is a literal backtick (`) here.``
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p><code>There is a literal backtick (`) here.</code></p>
-<hr />
-<p>The backtick delimiters surrounding a code span may include spaces — one after the opening, one before the closing. This allows you to place literal backtick characters at the beginning or end of a code span:</p>
-<p>Code:</p>
-<pre><code>A single backtick in a code span: `` ` ``
-
-A backtick-delimited string in a code span: `` `foo` ``
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>A single backtick in a code span: <code>`</code></p>
-<p>A backtick-delimited string in a code span: <code>`foo`</code></p>
-<hr />
-<h3>Images</h3>
-<p>HTML Tag: <code>&lt;img /&gt;</code></p>
-<p>Markdown uses an image syntax that is intended to resemble the syntax for links, allowing for two styles: inline and reference.</p>
-<h4>Inline</h4>
-<p>Inline image syntax looks like this: <code>![Alt text](URL "Title")</code></p>
-<p>Title is optional.</p>
-<p>Code:</p>
-<pre><code>![Alt text](/path/to/img.jpg)
-
-![Alt text](/path/to/img.jpg "Optional title")
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p><img src="https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp" alt="Alt text" /></p>
-<p><img src="https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp" alt="Alt text" title="Optional title" /></p>
-<hr />
-<p>That is:</p>
+<h2>验证结果</h2>
+<p>现在你可以尝试在浏览器打开：</p>
 <ul>
-<li>An exclamation mark: !;</li>
-<li>followed by a set of square brackets, containing the alt attribute text for the image;</li>
-<li>followed by a set of parentheses, containing the URL or path to the image, and an optional title attribute enclosed in double or single quotes.</li>
+<li>
+<p><code>https://www.0xav10086.space</code> —— 应该看到你的 Fuwari 博客。</p>
+</li>
+<li>
+<p><code>https://dash.0xav10086.space</code> —— 应该看到你 8686 端口的服务。</p>
+</li>
 </ul>
-<h4>Reference</h4>
-<p>Reference-style image syntax looks like this: <code>![Alt text][id]</code></p>
-<p>Code:</p>
-<pre><code>[img id]: https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp  "Optional title attribute"
-![Alt text][img id]
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p><img src="https://s2.loli.net/2024/08/20/5fszgXeOxmL3Wdv.webp" alt="Alt text" title="Optional title attribute" /></p>
-<hr />
-<h3>Strikethrough</h3>
-<p>HTML Tag: <code>&lt;del&gt;</code></p>
-<p>It's an extension.</p>
-<p>GFM adds syntax to strikethrough text.</p>
-<p>Code:</p>
-<pre><code>~~Mistaken text.~~
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p><s>Mistaken text.</s></p>
-<hr />
-<h2>Miscellaneous</h2>
-<h3>Automatic Links</h3>
-<p>Markdown supports a shortcut style for creating "automatic" links for URLs and email addresses: simply surround the URL or email address with angle brackets.</p>
-<p>Code:</p>
-<pre><code>&lt;http://example.com/&gt;
-
-&lt;address@example.com&gt;
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p><a href="http://example.com/">http://example.com/</a></p>
-<p><a href="mailto:address@example.com">address@example.com</a></p>
-<hr />
-<p>GFM will autolink standard URLs.</p>
-<p>Code:</p>
-<pre><code>https://github.com/emn178/markdown
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>https://github.com/emn178/markdown</p>
-<hr />
-<h3>Backslash Escapes</h3>
-<p>Markdown allows you to use backslash escapes to generate literal characters which would otherwise have special meaning in Markdown's formatting syntax.</p>
-<p>Code:</p>
-<pre><code>\*literal asterisks\*
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>*literal asterisks*</p>
-<hr />
-<p>Markdown provides backslash escapes for the following characters:</p>
-<p>Code:</p>
-<pre><code>\   backslash
-`   backtick
-*   asterisk
-_   underscore
-{}  curly braces
-[]  square brackets
-()  parentheses
-#   hash mark
-+   plus sign
--   minus sign (hyphen)
-.   dot
-!   exclamation mark
-</code></pre>
-<h2>Inline HTML</h2>
-<p>For any markup that is not covered by Markdown's syntax, you simply use HTML itself. There's no need to preface it or delimit it to indicate that you're switching from Markdown to HTML; you just use the tags.</p>
-<p>Code:</p>
-<pre><code>This is a regular paragraph.
-
-&lt;table&gt;
-    &lt;tr&gt;
-        &lt;td&gt;Foo&lt;/td&gt;
-    &lt;/tr&gt;
-&lt;/table&gt;
-
-This is another regular paragraph.
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>This is a regular paragraph.</p>
-<p>&lt;table&gt;
-&lt;tr&gt;
-&lt;td&gt;Foo&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/table&gt;</p>
-<p>This is another regular paragraph.</p>
-<hr />
-<p>Note that Markdown formatting syntax is <strong>not processed within block-level HTML tags</strong>.</p>
-<p>Unlike block-level HTML tags, Markdown syntax is <strong>processed within span-level tags</strong>.</p>
-<p>Code:</p>
-<pre><code>&lt;span&gt;**Work**&lt;/span&gt;
-
-&lt;div&gt;
-    **No Work**
-&lt;/div&gt;
-</code></pre>
-<p>Preview:</p>
-<hr />
-<p>&lt;span&gt;<strong>Work</strong>&lt;/span&gt;</p>
-<p>&lt;div&gt;
-<strong>No Work</strong>
-&lt;/div&gt;</p>
-<hr />
+<h3>💡 避坑小贴士</h3>
+<ul>
+<li>
+<p><strong>防火墙</strong>：确保你的 VPS 开启了 <strong>80 (HTTP)</strong> 和 <strong>443 (HTTPS)</strong> 端口。如果是阿里云/腾讯云，记得在安全组里放行。</p>
+</li>
+<li>
+<p><strong>域名解析</strong>：确保你的 DNS 服务商那里已经把 <code>www</code>, <code>@</code> (根域名) 和 <code>dash</code> 都指向了你的 VPS IP。</p>
+</li>
+<li>
+<p><strong>权限</strong>：如果访问报 403 错误，执行 <code>chmod -R 755 /var/www/blog</code> 确保 Nginx 有权读取文件。</p>
+</li>
+</ul>
 ]]></content>
     <author>
       <name>0xav10086</name>
     </author>
-    <category term="Examples"></category>
+    <category term="Server"></category>
   </entry>
   <entry>
-    <title>Markdown Extended Features</title>
-    <link href="https://0xav10086.space/posts/markdown-extended/" rel="alternate" type="text/html"/>
-    <id>https://0xav10086.space/posts/markdown-extended/</id>
-    <published>2024-05-01T00:00:00.000Z</published>
-    <updated>2024-11-29T00:00:00.000Z</updated>
-    <summary>Read more about Markdown features in Mizuki</summary>
-    <content type="html"><![CDATA[<h2>GitHub Repository Cards</h2>
-<p>You can add dynamic cards that link to GitHub repositories, on page load, the repository information is pulled from the GitHub API.</p>
-<p>::github{repo="matsuzaka-yuki/Mizuki"}</p>
-<p>Create a GitHub repository card with the code <code>::github{repo="matsuzaka-yuki/Mizuki"}</code>.</p>
-<pre><code>::github{repo="matsuzaka-yuki/Mizuki"}
+    <title>how-to-use-github-actions</title>
+    <link href="https://0xav10086.space/posts/how-to-use-github-actions/" rel="alternate" type="text/html"/>
+    <id>https://0xav10086.space/posts/how-to-use-github-actions/</id>
+    <published>2026-01-29T00:00:00.000Z</published>
+    <updated>2026-01-29T00:00:00.000Z</updated>
+    <summary>这个教程将会教你如何使用Github的actions来自动化部署。</summary>
+    <content type="html"><![CDATA[<h2>1. GitHub 网页端设置：开启与保护</h2>
+<p>由于我的仓库是 <strong>Fork</strong> 来的，GitHub 为了安全会默认锁定自动化脚本。</p>
+<ul>
+<li>
+<p><strong>启用 Actions</strong>：必须手动进入仓库的 <strong>Actions</strong> 选项卡，点击 <strong>"I understand my workflows, go ahead and enable them"</strong> 才能激活工作流。</p>
+</li>
+<li>
+<p><strong>配置加密保险箱 (Secrets)</strong>：</p>
+<ul>
+<li>
+<p><strong>路径</strong>：<code>Settings -&gt; Secrets and variables -&gt; Actions -&gt; Repository secrets -&gt; New repository secrets</code>。</p>
+</li>
+<li>
+<p><strong>原则</strong>：千万不要在代码中明文写入 IP、用户名或私钥。</p>
+</li>
+<li>
+<p><strong>必填条目</strong>：<code>SSH_HOST</code> (IP)、<code>SSH_USER</code> (通常为 root)、<code>SSH_KEY</code> (完整的 <strong>私钥</strong> 内容)。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src=".%5CResource%5C20260129010211.png" alt="w-50%" /></p>
+<hr />
+<h2>2. CI.yml 编写：自动化的指令集</h2>
+<p>针对“本地构建 <code>dist</code>，GitHub 搬运”的需求，核心配置如下：</p>
+<ul>
+<li>
+<p><strong>触发条件 (<code>on</code>)</strong>：设置为 <code>push: branches: [master]</code>，确保你每次 <code>git push</code> 都会触发部署。</p>
+</li>
+<li>
+<p><strong>搬运工具 (<code>rsync</code>)</strong>：推荐使用 <code>Burnett01/rsync-deployments</code>，因为它比单纯的 SSH 命令更擅长处理文件夹同步。</p>
+</li>
+<li>
+<p><strong>关键代码段</strong>：</p>
+</li>
+</ul>
+<pre><code>    with:
+      switches: -avzr --delete       # -a 同步属性, --delete 保持目标与源完全一致
+      path: dist/                    # 仓库中的源目录
+      remote_path: /var/www/blog      # VPS 上的目的地
+      remote_host: ${{ secrets.SSH_HOST }}
+      remote_user: ${{ secrets.SSH_USER }}
+      remote_key: ${{ secrets.SSH_KEY }}
 </code></pre>
-<h2>Admonitions</h2>
-<p>Following types of admonitions are supported: <code>note</code> <code>tip</code> <code>important</code> <code>warning</code> <code>caution</code></p>
-<p>:::note
-Highlights information that users should take into account, even when skimming.
-:::</p>
-<p>:::tip
-Optional information to help a user be more successful.
-:::</p>
-<p>:::important
-Crucial information necessary for users to succeed.
-:::</p>
-<p>:::warning
-Critical content demanding immediate user attention due to potential risks.
-:::</p>
-<p>:::caution
-Negative potential consequences of an action.
-:::</p>
-<h3>Basic Syntax</h3>
-<pre><code>:::note
-Highlights information that users should take into account, even when skimming.
-:::
+<hr />
+<h2>3. VPS 端设置：安全门禁与接收</h2>
+<p>VPS 是部署的终点，必须配置好接收权限。</p>
+<ul>
+<li>
+<p><strong>SSH 密钥对</strong>：</p>
+<ul>
+<li>
+<p>使用 <code>ed25519</code> 算法生成，更安全高效。</p>
+</li>
+<li>
+<p><strong>公钥</strong> (<code>.pub</code>) 必须存放在 VPS 的 <code>~/.ssh/authorized_keys</code> 中。</p>
+</li>
+<li>
+<p><strong>私钥</strong> 交给 GitHub Secrets。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>权限规范</strong>（SSH 极其挑剔）：</p>
+<ul>
+<li>
+<p><code>~/.ssh</code> 目录：<code>700</code>。</p>
+</li>
+<li>
+<p><code>authorized_keys</code> 文件：<code>600</code>。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>环境准备</strong>：</p>
+<ul>
+<li>
+<p>手动创建目标目录：<code>mkdir -p /var/www/blog</code>。</p>
+</li>
+<li>
+<p>配置 Nginx：将 <code>root</code> 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照[[配置HTTPS]]这篇教程。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3>详细的配置流程</h3>
+<p>以下是详细的配置流程。请按顺序在 VPS 上检查：</p>
+<h4>1. 检查 VPS 上的权限</h4>
+<p>SSH 对文件权限极其敏感。如果权限太高，SSH 会出于安全考虑拒绝连接。请在 VPS 终端执行：</p>
+<pre><code># 生成密钥
+ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519 -C "github-actions-deploy"
 
-:::tip
-Optional information to help a user be more successful.
-:::
-</code></pre>
-<h3>Custom Titles</h3>
-<p>The title of the admonition can be customized.</p>
-<p>:::note[MY CUSTOM TITLE]
-This is a note with a custom title.
-:::</p>
-<pre><code>:::note[MY CUSTOM TITLE]
-This is a note with a custom title.
-:::
-</code></pre>
-<h3>GitHub Syntax</h3>
-<blockquote>
-<p>[!TIP]
-<a href="https://github.com/orgs/community/discussions/16925">The GitHub syntax</a> is also supported.</p>
-</blockquote>
-<pre><code>&gt; [!NOTE]
-&gt; The GitHub syntax is also supported.
+# 信任该公钥
+cat ~/.ssh/id_ed25519.pub &gt;&gt; ~/.ssh/authorized_keys
 
-&gt; [!TIP]
-&gt; The GitHub syntax is also supported.
+# 确保 .ssh 目录权限为 700
+chmod 700 ~/.ssh
+
+# 确保 authorized_keys 权限为 600
+chmod 600 ~/.ssh/authorized_keys
+
+# 确保 /root 或 /home/用户 目录没有赋予过高的组权限
+chmod 755 /root
 </code></pre>
-<h3>Spoiler</h3>
-<p>You can add spoilers to your text. The text also supports <strong>Markdown</strong> syntax.</p>
-<p>The content :spoiler[is hidden <strong>ayyy</strong>]!</p>
-<pre><code>The content :spoiler[is hidden **ayyy**]!</code></pre>
-]]></content>
-    <author>
-      <name>0xav10086</name>
-    </author>
-    <category term="Examples"></category>
-  </entry>
-  <entry>
-    <title>Simple Guides for Mizuki</title>
-    <link href="https://0xav10086.space/posts/guide/" rel="alternate" type="text/html"/>
-    <id>https://0xav10086.space/posts/guide/</id>
-    <published>2024-04-01T00:00:00.000Z</published>
-    <updated>2024-04-01T00:00:00.000Z</updated>
-    <summary>How to use this blog template.</summary>
-    <content type="html"><![CDATA[<p>This blog template is built with <a href="https://astro.build/">Astro</a>. For the things that are not mentioned in this guide, you may find the answers in the <a href="https://docs.astro.build/">Astro Docs</a>.</p>
-<h2>Front-matter of Posts</h2>
-<pre><code>---
-title: My First Blog Post
-published: 2023-09-09
-description: This is the first post of my new Astro blog.
-image: ./cover.jpg
-tags: [Foo, Bar]
-category: Front-end
-draft: false
----
+<hr />
+<h4>2. 核对公钥内容</h4>
+<p>请确认公钥是否<strong>完整且正确</strong>地存放在了 <code>authorized_keys</code> 文件中：</p>
+<ol>
+<li>
+<p>查看公钥内容：</p>
+<pre><code>cat ~/.ssh/id_ed25519.pub
 </code></pre>
+</li>
+<li>
+<p>查看 <code>authorized_keys</code> 文件：</p>
+<pre><code>cat ~/.ssh/authorized_keys
+</code></pre>
+<p><strong>检查点</strong>：<code>authorized_keys</code> 中必须包含一行以 <code>ssh-ed25519 ... github-actions-deploy</code> 结尾的内容。如果里面有换行错误或字符缺失，请清空它并重新写入：</p>
+<pre><code>echo "这里粘贴你刚才查看到的 id_ed25519.pub 完整内容" &gt; ~/.ssh/authorized_keys
+</code></pre>
+</li>
+</ol>
+<hr />
+<h4>3. 检查 root 用户登录限制</h4>
+<p>如果在 <code>SSH_USER</code> 中填的是 <code>root</code>，很多 Linux 系统默认是禁止 root 通过密钥远程登录的。</p>
+<ol>
+<li>
+<p>打开 SSH 配置文件：</p>
+<pre><code>nano /etc/ssh/sshd_config
+</code></pre>
+</li>
+<li>
+<p>查找并确保以下两行没有被注释（前面没有 <code>#</code>）且设置正确：</p>
+<pre><code>PubkeyAuthentication yes
+PermitRootLogin yes
+</code></pre>
+</li>
+<li>
+<p>如果修改了文件，记得重启 SSH 服务：</p>
+<pre><code>systemctl restart ssh
+</code></pre>
+</li>
+</ol>
+<hr />
+<h4>4. 再次核对 GitHub 端的 SSH_KEY</h4>
+<p>请再次确认你在 GitHub <strong>Secrets</strong> 中填入的是 <strong>私钥</strong>（即没有 <code>.pub</code> 后缀的那个文件）。</p>
+<ul>
+<li>
+<p><strong>错误做法</strong>：把 <code>id_ed25519.pub</code>（公钥）填到了 GitHub。</p>
+</li>
+<li>
+<p><strong>正确做法</strong>：把 <code>id_ed25519</code>（内容以 <code>-----BEGIN OPENSSH PRIVATE KEY-----</code> 开头）填到了 GitHub。</p>
+</li>
+</ul>
+<hr />
+<h2>4. 验证工作是否修复</h2>
+<p>你可以点击 GitHub 上的 <strong>"Run workflow"</strong>。如果权限配置正确，你会看到日志显示：</p>
+<ul>
+<li>
+<p><strong>绿色对勾 (✔️)</strong>：恭喜，部署成功。</p>
+</li>
+<li>
+<p><strong>红色叉号 (❌)</strong>：出错了。点击进去看具体的错误日志（比如 <code>Permission denied</code> 或者 <code>No such file or directory</code>）。</p>
+</li>
+</ul>
+<p><img src=".%5CResource%5C20260129010902.png" alt="w-50%" /></p>
+<p>当在 Actions 页面看到 <strong>红叉 (❌)</strong> 时，可以根据日志快速定位：</p>
 <table>
 <thead>
 <tr>
-<th>Attribute</th>
-<th>Description</th>
+<th><strong>错误提示</strong></th>
+<th><strong>原因</strong></th>
+<th><strong>解决方法</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>title</code></td>
-<td>The title of the post.</td>
+<td><strong><code>Name does not resolve</code></strong></td>
+<td><code>remote_host</code> 变量为空</td>
+<td>检查 Secrets 里的变量名是否拼写正确。</td>
 </tr>
 <tr>
-<td><code>published</code></td>
-<td>The date the post was published.</td>
+<td><strong><code>Permission denied (password)</code></strong></td>
+<td>VPS 拒绝了密钥</td>
+<td>1. 检查公钥是否在 <code>authorized_keys</code> 中；2. 检查 <code>.ssh</code> 目录权限。</td>
 </tr>
 <tr>
-<td><code>pinned</code></td>
-<td>Whether this post is pinned to the top of the post list.</td>
+<td><strong><code>No such file or directory</code></strong></td>
+<td>VPS 路径不存在</td>
+<td>在 VPS 上手动执行 <code>mkdir -p</code> 创建目标文件夹。</td>
 </tr>
 <tr>
-<td><code>priority</code></td>
-<td>The priority of the pinned post. Smaller value means higher priority (0, 1, 2...).</td>
-</tr>
-<tr>
-<td><code>description</code></td>
-<td>A short description of the post. Displayed on index page.</td>
-</tr>
-<tr>
-<td><code>image</code></td>
-<td>The cover image path of the post.&lt;br/&gt;1. Start with <code>http://</code> or <code>https://</code>: Use web image&lt;br/&gt;2. Start with <code>/</code>: For image in <code>public</code> dir&lt;br/&gt;3. With none of the prefixes: Relative to the markdown file</td>
-</tr>
-<tr>
-<td><code>tags</code></td>
-<td>The tags of the post.</td>
-</tr>
-<tr>
-<td><code>category</code></td>
-<td>The category of the post.</td>
-</tr>
-<tr>
-<td><code>licenseName</code></td>
-<td>The license name for the post content.</td>
-</tr>
-<tr>
-<td><code>author</code></td>
-<td>The author of the post.</td>
-</tr>
-<tr>
-<td><code>sourceLink</code></td>
-<td>The source link or reference for the post content.</td>
-</tr>
-<tr>
-<td><code>draft</code></td>
-<td>If this post is still a draft, which won't be displayed.</td>
+<td><strong><code>Certbot: DNS check failed</code></strong></td>
+<td>域名未解析</td>
+<td>在 Cloudflare 添加根域名（@）的 A 记录 。</td>
 </tr>
 </tbody>
 </table>
-<h2>Where to Place the Post Files</h2>
-<p>Your post files should be placed in <code>src/content/posts/</code> directory. You can also create sub-directories to better organize your posts and assets.</p>
-<pre><code>src/content/posts/
-├── post-1.md
-└── post-2/
-    ├── cover.webp
-    └── index.md
-</code></pre>
+<hr />
+<h2>5. 终极工作流</h2>
+<p>以后更新博客只需要：</p>
+<ol>
+<li>
+<p><strong>本地</strong>：写文章。</p>
+</li>
+<li>
+<p><strong>本地</strong>：<code>pnpm build</code>（生成最新的 <code>dist</code>）。</p>
+</li>
+<li>
+<p><strong>本地</strong>：<code>git add .</code> -&gt; <code>git commit</code> -&gt; <code>git push</code>。</p>
+</li>
+<li>
+<p><strong>云端</strong>：GitHub 自动把文件推送到 VPS。</p>
+</li>
+<li>
+<p><strong>结果</strong>：刷新 <code>0xav10086.space</code> 即可看到更新。</p>
+</li>
+</ol>
 ]]></content>
     <author>
       <name>0xav10086</name>
     </author>
-    <category term="Guides"></category>
-  </entry>
-  <entry>
-    <title>Markdown Mermaid</title>
-    <link href="https://0xav10086.space/posts/markdown-mermaid/" rel="alternate" type="text/html"/>
-    <id>https://0xav10086.space/posts/markdown-mermaid/</id>
-    <published>2023-10-01T00:00:00.000Z</published>
-    <updated>2023-10-01T00:00:00.000Z</updated>
-    <summary>A simple example of a Markdown blog post with Mermaid.</summary>
-    <content type="html"><![CDATA[<h1>Complete Guide to Markdown with Mermaid Diagrams</h1>
-<p>This article demonstrates how to create various complex diagrams using Mermaid in Markdown documents, including flowcharts, sequence diagrams, Gantt charts, class diagrams, and state diagrams.</p>
-<h2>Flowchart Example</h2>
-<p>Flowcharts are excellent for representing processes or algorithm steps.</p>
-<pre><code>graph TD
-    A[Start] --&gt; B{Condition Check}
-    B --&gt;|Yes| C[Process Step 1]
-    B --&gt;|No| D[Process Step 2]
-    C --&gt; E[Subprocess]
-    D --&gt; E
-    subgraph E [Subprocess Details]
-        E1[Substep 1] --&gt; E2[Substep 2]
-        E2 --&gt; E3[Substep 3]
-    end
-    E --&gt; F{Another Decision}
-    F --&gt;|Option 1| G[Result 1]
-    F --&gt;|Option 2| H[Result 2]
-    F --&gt;|Option 3| I[Result 3]
-    G --&gt; J[End]
-    H --&gt; J
-    I --&gt; J
-</code></pre>
-<h2>Sequence Diagram Example</h2>
-<p>Sequence diagrams show interactions between objects over time.</p>
-<pre><code>sequenceDiagram
-    participant User
-    participant WebApp
-    participant Server
-    participant Database
-
-    User-&gt;&gt;WebApp: Submit Login Request
-    WebApp-&gt;&gt;Server: Send Auth Request
-    Server-&gt;&gt;Database: Query User Credentials
-    Database--&gt;&gt;Server: Return User Data
-    Server--&gt;&gt;WebApp: Return Auth Result
-    
-    alt Auth Successful
-        WebApp-&gt;&gt;User: Show Welcome Page
-        WebApp-&gt;&gt;Server: Request User Data
-        Server-&gt;&gt;Database: Get User Preferences
-        Database--&gt;&gt;Server: Return Preferences
-        Server--&gt;&gt;WebApp: Return User Data
-        WebApp-&gt;&gt;User: Load Personalized Interface
-    else Auth Failed
-        WebApp-&gt;&gt;User: Show Error Message
-        WebApp-&gt;&gt;User: Prompt Re-entry
-    end
-</code></pre>
-<h2>Gantt Chart Example</h2>
-<p>Gantt charts are perfect for displaying project schedules and timelines.</p>
-<pre><code>gantt
-    title Website Development Project Timeline
-    dateFormat  YYYY-MM-DD
-    axisFormat  %m/%d
-    
-    section Design Phase
-    Requirements Analysis      :a1, 2023-10-01, 7d
-    UI Design                 :a2, after a1, 10d
-    Prototype Creation        :a3, after a2, 5d
-    
-    section Development Phase
-    Frontend Development      :b1, 2023-10-20, 15d
-    Backend Development       :b2, after a2, 18d
-    Database Design           :b3, after a1, 12d
-    
-    section Testing Phase
-    Unit Testing              :c1, after b1, 8d
-    Integration Testing       :c2, after b2, 10d
-    User Acceptance Testing   :c3, after c2, 7d
-    
-    section Deployment
-    Production Deployment     :d1, after c3, 3d
-    Launch                    :milestone, after d1, 0d
-</code></pre>
-<h2>Class Diagram Example</h2>
-<p>Class diagrams show the static structure of a system, including classes, attributes, methods, and their relationships.</p>
-<pre><code>classDiagram
-    class User {
-        +String username
-        +String password
-        +String email
-        +Boolean active
-        +login()
-        +logout()
-        +updateProfile()
-    }
-    
-    class Article {
-        +String title
-        +String content
-        +Date publishDate
-        +Boolean published
-        +publish()
-        +edit()
-        +delete()
-    }
-    
-    class Comment {
-        +String content
-        +Date commentDate
-        +addComment()
-        +deleteComment()
-    }
-    
-    class Category {
-        +String name
-        +String description
-        +addArticle()
-        +removeArticle()
-    }
-    
-    User "1" -- "*" Article : writes
-    User "1" -- "*" Comment : posts
-    Article "1" -- "*" Comment : has
-    Article "1" -- "*" Category : belongs to
-</code></pre>
-<h2>State Diagram Example</h2>
-<p>State diagrams show the sequence of states an object goes through during its life cycle.</p>
-<pre><code>stateDiagram-v2
-    [*] --&gt; Draft
-    
-    Draft --&gt; UnderReview : submit
-    UnderReview --&gt; Draft : reject
-    UnderReview --&gt; Approved : approve
-    Approved --&gt; Published : publish
-    Published --&gt; Archived : archive
-    Published --&gt; Draft : retract
-    
-    state Published {
-        [*] --&gt; Active
-        Active --&gt; Hidden : temporarily hide
-        Hidden --&gt; Active : restore
-        Active --&gt; [*]
-        Hidden --&gt; [*]
-    }
-    
-    Archived --&gt; [*]
-</code></pre>
-<h2>Pie Chart Example</h2>
-<p>Pie charts are ideal for displaying proportions and percentage data.</p>
-<pre><code>pie title Website Traffic Sources Analysis
-    "Search Engines" : 45.6
-    "Direct Access" : 30.1
-    "Social Media" : 15.3
-    "Referral Links" : 6.4
-    "Other Sources" : 2.6
-</code></pre>
-<h2>Conclusion</h2>
-<p>Mermaid is a powerful tool for creating various types of diagrams in Markdown documents. This article demonstrated how to use flowcharts, sequence diagrams, Gantt charts, class diagrams, state diagrams, and pie charts. These diagrams can help you express complex concepts, processes, and data structures more clearly.</p>
-<p>To use Mermaid, simply specify the mermaid language in a code block and describe the diagram using concise text syntax. Mermaid will automatically convert these descriptions into beautiful visual diagrams.</p>
-<p>Try using Mermaid diagrams in your next technical blog post or project documentation - they will make your content more professional and easier to understand!</p>
-]]></content>
-    <author>
-      <name>0xav10086</name>
-    </author>
-    <category term="Examples"></category>
-  </entry>
-  <entry>
-    <title>Include Video in the Posts</title>
-    <link href="https://0xav10086.space/posts/video/" rel="alternate" type="text/html"/>
-    <id>https://0xav10086.space/posts/video/</id>
-    <published>2022-08-01T00:00:00.000Z</published>
-    <updated>2022-08-01T00:00:00.000Z</updated>
-    <summary>This post demonstrates how to include embedded video in a blog post.</summary>
-    <content type="html"><![CDATA[<p>Just copy the embed code from YouTube or other platforms, and paste it in the markdown file.</p>
-<pre><code>---
-title: Include Video in the Post
-published: 2023-10-19
-// ...
----
-
-&lt;iframe width="100%" height="468" src="https://www.youtube.com/embed/5gIf0_xpFPI?si=N1WTorLKL0uwLsU_" title="YouTube video player" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;
-</code></pre>
-<h2>YouTube</h2>
-<p>&lt;iframe width="100%" height="468" src="https://www.youtube.com/embed/5gIf0_xpFPI?si=N1WTorLKL0uwLsU_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen&gt;&lt;/iframe&gt;</p>
-<h2>Bilibili</h2>
-<p>&lt;iframe width="100%" height="468" src="//player.bilibili.com/player.html?bvid=BV1fK4y1s7Qf&amp;p=1&amp;autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" &amp;autoplay=0&gt; &lt;/iframe&gt;</p>
-]]></content>
-    <author>
-      <name>0xav10086</name>
-    </author>
-    <category term="Examples"></category>
+    <category term="Git"></category>
   </entry>
 </feed>
