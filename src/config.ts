@@ -384,7 +384,12 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Discord",
 			icon: "fa6-brands:discord",
-			url: "https://discord.gg/1112318893512462337",
+			url: "https://discord.gg/XzsnX7qaGf",
+		},
+		{
+			name: "Telegram",
+			icon: "fa6-brands:telegram",
+			url: "https://t.me/share0xav10086",
 		},
 	],
 };
