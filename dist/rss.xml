@@ -1,4 +1,837 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Mizuki</title><description>One demo website</description><link>https://0xav10086.space/</link><language>zh_CN</language><item><title>how-to-configuration-HTTPS</title><link>https://0xav10086.space/posts/how-to-configuration-https/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-configuration-https/</guid><description>这个教程将会教你如何配置HTTPS。</description><pubDate>Thu, 29 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;第一步：获取 Cloudflare 名称服务器&lt;/h2&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Mizuki</title><description>One demo website</description><link>https://0xav10086.space/</link><language>zh_CN</language><item><title>asyncio-异步编程</title><link>https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</link><guid isPermaLink="true">https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</guid><description>这个教程将会教你如何使用asyncio进行异步编程。</description><pubDate>Sat, 07 Feb 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;用asyncio进行异步编程&lt;/h1&gt;
+&lt;p&gt;本教程源于&lt;a href=&quot;https://www.bilibili.com/video/BV157mFYEEkH/?vd_source=3654085a5ac7355d466d8ad324a1973f&quot;&gt;【Py】asyncio：为异步编程而生 | Python 教程 | 并发编程 | 协程&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;本教程适用于Python&lt;/p&gt;
+&lt;h2&gt;基本概念&lt;/h2&gt;
+&lt;p&gt;主要讲解‘协程’、‘事件循环’和‘任务’这三者&lt;/p&gt;
+&lt;h3&gt;协程&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;协程是可挂起和恢复的函数，它允许在执行期间暂停，以便其他任务可以运行。&lt;/li&gt;
+&lt;li&gt;在Python中，协程是使用&lt;code&gt;async def&lt;/code&gt;定义的，内部可以使用&lt;code&gt;await&lt;/code&gt;等待其他协程或异步操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;与线程或进程的不同之处在于，协程在单个线程中并发运行，避免了线程切换的开销。&lt;/p&gt;
+&lt;p&gt;以下是一些关于协程的关键概念：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;定义：协程是一种可以暂停和恢复执行的函数。可以将其看作是一个可挂起的函数，当它遇到某些等待操作时（例如I/O），可以暂时挂起，允许其他协程继续执行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;非阻塞：协程在等待某些操作完成时不会阻塞主程序的执行，这使得程序可以同时处理多个任务，尤其在处理I/O密集型操作时非常高效。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;async&lt;/code&gt;和&lt;code&gt;await&lt;/code&gt;关键字：在Python中，使用&lt;code&gt;async def&lt;/code&gt;定义协程，使用&lt;code&gt;await&lt;/code&gt;来调用其他协程。这些关键字使得协程的语法更加清晰易懂。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;状态保持：协程可以在暂停时保持其状态。当它恢复执行时，可以继续从上次暂停的位置继续运行，这样可以有效管理复杂的异步逻辑。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;协程函数和协程对象&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;import asyncio
+
+async def coroutine_function():
+    return &apos;This is a coroutine function&apos;
+
+print(coroutine_function())
+
+# output:
+# &amp;lt;coroutine object coroutine_function at 0x000001EDFFB15430&amp;gt;
+# C:\Users\li\SynologyDrive\code\test.py:6: RuntimeWarning: coroutine &apos;coroutine_function&apos; was never awaited
+# print(coroutine_function())
+# RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在这个例子中，这个函数的返回值是一个协程对象&lt;code&gt;coroutine object&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;协程函数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;协程函数是使用&lt;code&gt;async def&lt;/code&gt;定义的函数。调用协程函数时，它不会立即执行函数体中的代码，而是返回一个协程对象。&lt;/li&gt;
+&lt;li&gt;协程函数可以包含&lt;code&gt;await&lt;/code&gt;表达式，用于暂停执行并等待其他协程或异步操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;协程对象：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;协程对象是协程函数调用后返回的对象。这个对象可以被事件循环调度并执行。&lt;/li&gt;
+&lt;li&gt;当事件循环运行并调用协程对象时，协程函数的代码才会被执行。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;关系：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在调用协程函数时，返回的是一个协程对象；真正的代码执行发生在事件循环调度协程对象时。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这种关系与生成器和生成器函数之间的关系相似：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;生成器函数：使用&lt;code&gt;def&lt;/code&gt;定义的函数，包含&lt;code&gt;yield&lt;/code&gt;语句，调用时返回一个生成器对象。&lt;/li&gt;
+&lt;li&gt;生成器对象：在调用生成器函数时返回的对象，实际的代码执行在迭代生成器对象时发生。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;事件循环&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;事件循环是一个管理协程和任务的机制。它负责调度和执行协程，并在需要时切换控制权。&lt;/li&gt;
+&lt;li&gt;事件循环会不断检查哪些协程可以运行，哪些需要等待，以及何时可以恢复已经挂起的协程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;事件循环是异步编程的核心概念，负责调度和管理所有异步任务的执行。&lt;/p&gt;
+&lt;p&gt;它的基本功能如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;管理任务：事件循环会监视多个任务，并在任务处于等待状态时，不会阻塞主程序，而是继续处理其他任务。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;调度执行：当某个任务准备好执行时，事件循环会将其从等待队列中取出并执行。这种机制使得可以在同一线程中并发处理多个任务。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;处理I/O操作：事件循环特别适合处理I/O密集型操作，如网络请求、文件读取等，因为这些操作通常需要等待，而事件循环可以在等待期间执行其他任务。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;回调和事件：事件循环允许注册回调函数，当特定事件发生时（例如I/O操作完成），这些回调会被调用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;任务&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;任务是事件循环中的一个概念，它表示一个计划在未来某个时刻执行的协程。&lt;/li&gt;
+&lt;li&gt;当协程被调度到事件循环中执行时，它会被封装为一个任务（使用&lt;code&gt;asyncio.create_task()&lt;/code&gt;等方法创建）。任务会被事件循环管理，并可以在后台运行。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;关系&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;协程是实际的执行单位，定义了异步操作的逻辑。&lt;/li&gt;
+&lt;li&gt;事件循环是调度这些协程的机制，负责管理它们的执行。&lt;/li&gt;
+&lt;li&gt;任务是事件循环中协程的封装形式，用于跟踪协程的执行状态。任务可以在事件循环中并发执行，并允许事件循环在等待时管理其他协程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;https://0xav10086.space/_astro/20241031000654.DxX3u9zH_ZYMnMo.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;异步代码步骤&lt;/h2&gt;
+&lt;p&gt;异步编程只需要做三件事：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;定义协程函数&lt;/li&gt;
+&lt;li&gt;包装协程为任务&lt;/li&gt;
+&lt;li&gt;建立事件循环&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以下是原始代码：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from time import sleep, perf_counter
+
+def fetch_url(url):
+    print(&apos;Fetching The URL&apos;)
+    sleep(1)
+    print(&apos;Finished Fetching&apos;)
+    return &apos;url_content&apos;
+
+def read_file(filename):
+    print(&apos;Reading File&apos;)
+    sleep(1)
+    print(&apos;Finished Reading&apos;)
+    return &apos;file_content&apos;
+
+def main():
+    url = &apos;example.com&apos;
+    filename = &apos;example.txt&apos;
+    fetch_result = fetch_url(url)
+    read_result = read_file(filename)
+
+if __name__ == &apos;__main__&apos;:
+    start_time = perf_counter()
+    main()
+    end_time = perf_counter()
+    print(f&apos;Execution Time: {end_time - start_time:.2f}&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;首先修改部分代码，进行定义协程函数的操作（省略库的导入）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;async def fetch_url(url):
+    print(&apos;Fetching The URL&apos;)
+    await asyncio.sleep(1)
+    print(&apos;Finished Fetching&apos;)
+    return &apos;url_content&apos;
+
+async def read_file(filename):
+    print(&apos;Reading File&apos;)
+    await asyncio.sleep(1)
+    print(&apos;Finished Reading&apos;)
+    return &apos;file_content&apos;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;然后进行包装协程为任务：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;async def main():
+    url = &apos;example.com&apos;
+    filename = &apos;example.txt&apos;
+    task1 = asyncio.create_task(fetch_url(url))
+    task2 = asyncio.create_task(read_file(filename))
+    fetch_result = await task1
+    read_result = await task2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;最后建立事件循环：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;if __name__ == &apos;__main__&apos;:
+    start_time = perf_counter()
+    asyncio.run(main())
+    end_time = perf_counter()
+    print(f&apos;Execution Time: {end_time - start_time:.2f}&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;await&lt;/code&gt;的作用：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;暂停当前协程&lt;/li&gt;
+&lt;li&gt;包装&lt;code&gt;await&lt;/code&gt;后的协程为任务，若&lt;code&gt;await&lt;/code&gt;后是一个协程对象时，会直接执行该协程，而不是将其包装为任务&lt;/li&gt;
+&lt;li&gt;获取&lt;code&gt;await&lt;/code&gt;后的协程结果&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;完整代码：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from time import sleep, perf_counter
+import asyncio
+
+async def fetch_url(url):
+    print(&apos;Fetching The URL&apos;)
+    await asyncio.sleep(1)
+    print(&apos;Finished Fetching&apos;)
+    return &apos;url_content&apos;
+
+async def read_file(filename):
+    print(&apos;Reading File&apos;)
+    await asyncio.sleep(1)
+    print(&apos;Finished Reading&apos;)
+    return &apos;file_content&apos;
+
+async def main():
+    url = &apos;example.com&apos;
+    filename = &apos;example.txt&apos;
+    task1 = asyncio.create_task(fetch_url(url))
+    task2 = asyncio.create_task(read_file(filename))
+    fetch_result = await task1
+    read_result = await task2
+
+if __name__ == &apos;__main__&apos;:
+    start_time = perf_counter()
+    asyncio.run(main())
+    end_time = perf_counter()
+    print(f&apos;Execution Time: {end_time - start_time:.2f}&apos;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;运行结果：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Fetching The URL
+Reading File
+Finished Fetching
+Finished Reading
+Execution Time: 1.02
+&lt;/code&gt;&lt;/pre&gt;
+</content:encoded></item><item><title>how-to-play-endfield-in-arch</title><link>https://0xav10086.space/posts/how-to-play-endfield-in-arch/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-play-endfield-in-arch/</guid><description>这个教程将会教你如何在 Arch Linux 上开启《终末地》之旅。</description><pubDate>Fri, 06 Feb 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;在 Arch Linux 上开启《终末地》之旅&lt;/h1&gt;
+&lt;h2&gt;前言：在 Arch Linux 上开启《终末地》之旅&lt;/h2&gt;
+&lt;p&gt;本文假设你已经是一名 &lt;strong&gt;Arch 糕手&lt;/strong&gt;，习惯了 &lt;code&gt;pacman&lt;/code&gt; 的迅捷和 &lt;code&gt;hyprland&lt;/code&gt; 的灵动，只是在面对《明日方舟：终末地》这类 Windows 大作时稍有疑惑。&lt;/p&gt;
+&lt;p&gt;虽然游戏原生运行在 Windows 环境，但在 Arch Linux 下通过合理的配置，理论上能获得更佳的“满血”体验，原因如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;极简的系统开销：&lt;/strong&gt; 相比 Windows 臃肿的后台（遥测、Defender 实时扫描、强制更新），Arch 仅运行你需要的组件，将每一份 CPU 和内存资源都留给游戏 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;文件系统效率：&lt;/strong&gt; EXT4 或 Btrfs 在处理 Unity 引擎海量的小文件读写时，效率显著高于 Windows 的 NTFS。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;原生 Vulkan 优势：&lt;/strong&gt; 《终末地》原生支持 Vulkan 接口。在 Linux 下，指令通过高质量驱动直接与显卡通信，绕过了 Windows 内部繁琐的显示驱动堆栈。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;高级线程调度：&lt;/strong&gt; 借助 &lt;strong&gt;Fsync&lt;/strong&gt;，Linux 内核能以远高于 Windows 标准调度器的效率处理游戏的多线程同步，有效缓解掉帧和卡顿 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2&gt;系统底层准备：打好“地基”&lt;/h2&gt;
+&lt;p&gt;在安装任何游戏之前，你的系统必须具备处理 32 位指令、图形渲染和环境模拟的能力。&lt;/p&gt;
+&lt;h3&gt;1. 开启 Multilib 仓库&lt;/h3&gt;
+&lt;p&gt;绝大多数游戏及运行库都需要 32 位（lib32）支持。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;打开终端，编辑配置文件：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;	sudo nvim /etc/pacman.conf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;找到以下两行，去掉前面的 &lt;code&gt;#&lt;/code&gt; 注释符：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[multilib]
+Include = /etc/pacman.d/mirrorlist
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;保存退出，并同步仓库：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;	yay -Syu
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2. 安装显卡驱动 (GPU Drivers)&lt;/h3&gt;
+&lt;p&gt;《终末地》对显卡性能要求较高，驱动必须完整且支持 Vulkan。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;显卡类型&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;必装核心包&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;32 位兼容及 Vulkan 支持 (必装)&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;NVIDIA&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;nvidia&lt;/code&gt; &lt;code&gt;nvidia-utils&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;lib32-nvidia-utils&lt;/code&gt; &lt;code&gt;vulkan-icd-loader&lt;/code&gt; &lt;code&gt;lib32-vulkan-icd-loader&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;AMD&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;mesa&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;lib32-mesa&lt;/code&gt; &lt;code&gt;vulkan-radeon&lt;/code&gt; &lt;code&gt;lib32-vulkan-radeon&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Intel&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;mesa&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;lib32-mesa&lt;/code&gt; &lt;code&gt;vulkan-intel&lt;/code&gt; &lt;code&gt;lib32-vulkan-intel&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;提示：&lt;/strong&gt; 如果你是双显卡笔记本（核显+独显），建议安装 &lt;code&gt;nvidia-prime&lt;/code&gt; 或 &lt;code&gt;bumblebee&lt;/code&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr /&gt;
+&lt;h3&gt;3. 安装 Wine 及其全家桶&lt;/h3&gt;
+&lt;p&gt;Wine 是运行 Windows 程序的灵魂。虽然 Lutris 会自带运行器，但系统原生安装一些核心依赖可以避免 99% 的闪退问题。&lt;/p&gt;
+&lt;p&gt;执行以下命令安装 &lt;strong&gt;Wine-Staging&lt;/strong&gt;（测试版，对游戏支持更好）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yay -S wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls mpg123 lib32-mpg123 libxml2 lib32-libxml2 libpulse lib32-libpulse alsa-plugins lib32-alsa-plugins
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在 Arch Linux 的世界里，我们崇尚“最小化安装”和“手动控制”。虽然 Lutris 会自带运行器，但如果不安装系统级的依赖库，你可能会遇到游戏有画面没声音、起动器登录不上、或者干脆直接黑屏等各种离谱问题 。&lt;/p&gt;
+&lt;p&gt;你可以把这一长串 &lt;code&gt;yay&lt;/code&gt; 命令看作是给你的 Wine 准备一套&lt;strong&gt;全能工具箱&lt;/strong&gt;。以下是必须安装它们的硬核理由：&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h4&gt;1. 32 位兼容性（lib32 系列）&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;理由：&lt;/strong&gt; 绝大多数 Windows 游戏的底层组件、起动器或反作弊插件依然在使用 32 位架构 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;后果：&lt;/strong&gt; 如果不装这些，Wine 在尝试拉起 32 位进程时会直接报错退回终端 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;2. 图像与多媒体解码（giflib, libpng, mpg123）&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;理由：&lt;/strong&gt; 游戏中的 UI 图标、过场动画和背景音乐通常是经过压缩的（如 PNG 图片或 MP3 音频）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;后果：&lt;/strong&gt; 缺少这些库，你可能会看到满屏的“方块粉红贴图”，或者在砍怪时听不到任何音效。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;3. 网络安全与通信（gnutls, libldap）&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;理由：&lt;/strong&gt; 现代游戏（尤其是《终末地》这种二游）的起动器本质上是个浏览器，需要通过 HTTPS（加密连接）与服务器验证账号。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;后果：&lt;/strong&gt; 缺少 &lt;code&gt;gnutls&lt;/code&gt;，你的起动器可能永远显示“无法连接服务器”或“登录超时”。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;4. 音频渲染（libpulse, alsa-plugins）&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;理由：&lt;/strong&gt; Windows 发出的音频信号需要被翻译给 Linux 的音频服务器（如 PulseAudio 或 PipeWire）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;后果：&lt;/strong&gt; 没了它们，你的音箱就是个摆设。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;5. 系统底层设施（libxml2）&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;理由：&lt;/strong&gt; 用于解析各种 XML 格式的配置文件和注册表项。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;后果：&lt;/strong&gt; 可能导致 Wine 无法正确读取游戏路径或用户设置。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;一句话理由：&lt;/strong&gt; &amp;gt; Wine 只是一个“翻译官”，而这些库是它翻译时必须查阅的“词典” 。原生安装这些库能让系统优先调用 Arch 高性能的系统库，而不是 Lutris 容器里那些通用的旧版本，从而降低延迟并避免 99% 的闪退 。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr /&gt;
+&lt;h3&gt;4. 安装 Lutris&lt;/h3&gt;
+&lt;p&gt;既然我们要使用 Lutris，请务必安装官方仓库版本，而非 Flatpak 版本，以获得最佳的系统访问权限。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yay -S lutris
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h3&gt;5. 下载游戏启动器&lt;/h3&gt;
+&lt;p&gt;访问 &lt;a href=&quot;https://endfield.hypergryph.com/&quot;&gt;终末地官网&lt;/a&gt;下载PC启动器，将下载下来的&lt;code&gt;HypergryphLauncher_1.0.0_1_1_endfield.exe&lt;/code&gt;程序先放在合适的文件夹中，我这里放置在了 &lt;code&gt;~/Games/Endfield&lt;/code&gt;&lt;/p&gt;
+&lt;h3&gt;6. 使用 ProtonPlus 安装 dwproton&lt;/h3&gt;
+&lt;p&gt;在正式配置 Lutris 之前，我们需要获取关键的运行器：&lt;strong&gt;dwproton&lt;/strong&gt;（专门针对 ACE 等反作弊系统优化的版本） 。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;安装 ProtonPlus：&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yay -S protonplus-bin
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;获取 dwproton：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;打开 &lt;strong&gt;ProtonPlus&lt;/strong&gt;，在界面中找到 &lt;strong&gt;Lutris&lt;/strong&gt; 选项卡。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;点击添加按钮，在列表中搜索并下载 &lt;strong&gt;&lt;code&gt;dwproton-10.0-16&lt;/code&gt;&lt;/strong&gt; 或更高版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;该工具会自动将运行器放置在 Lutris 能够识别的路径。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;7. 补充：必要的英文字体&lt;/h3&gt;
+&lt;p&gt;许多 Windows 程序在 Linux 下会因为找不到默认字体（如 Arial）而导致界面乱码或报错。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;yay -S ttf-liberation ttf-ms-fonts
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;(注：&lt;code&gt;ttf-ms-fonts&lt;/code&gt; 可能需要通过 AUR 安装，如 &lt;code&gt;yay -S ttf-ms-fonts&lt;/code&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;Lutris 核心配置详解&lt;/h2&gt;
+&lt;p&gt;Lutris 的核心配置决定了游戏能否顺利“越过”反作弊系统并满血运行。以下是基于 &lt;code&gt;dwproton&lt;/code&gt; 环境的详细步骤。&lt;/p&gt;
+&lt;h3&gt;1. 建立虚拟 C 盘 (Wine Prefix)&lt;/h3&gt;
+&lt;p&gt;Lutris 的核心优势是环境隔离，即为《终末地》创建一个专属文件夹 。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;点击 Lutris 左上角 &lt;strong&gt;“+”&lt;/strong&gt; -&amp;gt; &lt;strong&gt;Install a Windows game from an executable&lt;/strong&gt; 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Executable&lt;/strong&gt;：选择你下载好的 &lt;code&gt;～/Games/Endfield/HypergryphLauncher_1.0.0_1_1_endfield.exe&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Wine prefix&lt;/strong&gt;：选择一个专门的文件夹（如 &lt;code&gt;~/Games/Endfield&lt;/code&gt;） 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;安装完成后，在登陆器中正常下载游戏资源。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2. 运行环境配置 (Runner Options)&lt;/h3&gt;
+&lt;p&gt;这是决定《终末地》能否运行的关键页面，特别是针对我们使用的 &lt;strong&gt;dwproton&lt;/strong&gt; 。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Wine version (运行器版本)&lt;/strong&gt;：手动选择 &lt;code&gt;dwproton-10.0-16&lt;/code&gt;或更新的版本 。该版本专门针对国产游戏的反作弊机制（如 ACE）进行了内核级优化 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Enable Esync/Fsync&lt;/strong&gt;：确保这两个开关全部 &lt;strong&gt;开启 (On)&lt;/strong&gt; 。在 Arch Linux 下，Fsync 能显著提升 CPU 效率并减少掉帧 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Enable DXVK&lt;/strong&gt;：即使游戏支持原生 Vulkan，建议依然保持 &lt;strong&gt;开启&lt;/strong&gt;，以确保基于 DirectX 的启动器界面能够正常显示 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;3. 系统优化设置 (System Options)&lt;/h3&gt;
+&lt;p&gt;为了保证游戏过程中的稳定性和性能，需要对系统行为进行微调 。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Prefer system libraries&lt;/strong&gt;：开启此项。Lutris 会优先调用你通过 &lt;code&gt;yay&lt;/code&gt; 安装的高性能系统库，而不是自带的旧版兼容库 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;FPS counter (MangoHud)&lt;/strong&gt;：在此处开启开关即可在游戏内显示实时帧率、温度及显存占用 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Disable screen saver&lt;/strong&gt;：开启。防止在游玩过程中（尤其是使用手柄时）系统自动进入休眠或黑屏 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;img src=&quot;https://0xav10086.space/_astro/20260204153507.FqLWOIqs_16lKBy.webp&quot; alt=&quot;w-50%&quot; /&gt;
+&lt;img src=&quot;https://0xav10086.space/_astro/20260204153213.C51gjfo0_RjPR4.webp&quot; alt=&quot;w-50%&quot; /&gt;
+&lt;img src=&quot;https://0xav10086.space/_astro/20260204153241.CuITj3L4_ZAcMjF.webp&quot; alt=&quot;w-50%&quot; /&gt;
+&lt;img src=&quot;https://0xav10086.space/_astro/20260204153331.KyKAsWNq_qREea.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;常见的“玄学”兼容性设置&lt;/h2&gt;
+&lt;p&gt;如果游戏启动没反应或运行异常，通常可以通过以下 &lt;strong&gt;DLL Overrides&lt;/strong&gt; 解决：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;键 (Key)&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;值 (Value)&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;作用&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;winemenubuilder.exe&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Disabled&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;防止 Wine 在 Linux 系统菜单生成冗余快捷方式&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;mbedtls&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;native, builtin&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;解决部分国产游戏起动器的网络连接或加密问题&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;d3dcompiler_47&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;native&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;解决 Unity 引擎游戏的着色器编译错误&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr /&gt;
+&lt;h2&gt;性能监控与显示 (MangoHud)&lt;/h2&gt;
+&lt;p&gt;在 Lutris 中开启帧率显示非常直观：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;系统级安装：&lt;/strong&gt; 通过 &lt;code&gt;yay -S mangohud lib32-mangohud&lt;/code&gt; 安装。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Lutris 开启：&lt;/strong&gt; 在游戏的 &lt;strong&gt;System options&lt;/strong&gt; 选项卡中，开启 &lt;strong&gt;FPS counter&lt;/strong&gt; 开关。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;自定义：&lt;/strong&gt; 使用 &lt;code&gt;goverlay&lt;/code&gt; 工具可视化调整监控面板的位置、颜色和显示指标。
+&lt;img src=&quot;https://0xav10086.space/_astro/20260204153406.Bhuv6ikX_JJWHp.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr /&gt;
+&lt;h2&gt;总结：稳定的运行逻辑&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;环境隔离：&lt;/strong&gt; 每个游戏拥有独立的 Wine Prefix。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;依赖补齐：&lt;/strong&gt; 在 Lutris 界面通过 &lt;strong&gt;Winetricks&lt;/strong&gt; 或 &lt;strong&gt;Dependencies&lt;/strong&gt; 页面安装 &lt;code&gt;vcredist&lt;/code&gt; 等必备组件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;权限透明：&lt;/strong&gt; 如果是 Arch 用户，尽量使用系统原生安装的 Lutris，以避免 Flatpak 沙盒带来的路径访问权限问题。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&quot;https://0xav10086.space/_astro/20260204160046.Ddm52p3F_ZOUihx.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;h1&gt;参考资料&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.bilibili.com/video/BV1RgzpBHEQG/&quot;&gt;明日方舟：终末地性能分析：二游画质巅峰？榨干手机！&lt;/a&gt;
+&lt;a href=&quot;https://www.bilibili.com/video/BV1WAkLBREk2/&quot;&gt;【教程】Linux玩终末地&lt;/a&gt;
+&lt;a href=&quot;https://www.bilibili.com/video/BV1LYzWBxEc8/&quot;&gt;【终末地帧数对比】Linux比Win帧数更高？&lt;/a&gt;&lt;/p&gt;
+</content:encoded></item><item><title>how-to-use-office-in-arch</title><link>https://0xav10086.space/posts/how-to-use-office-in-arch/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-use-office-in-arch/</guid><description>这个教程将会教你如何在 Arch Linux 中完美驱动 Microsoft Office。</description><pubDate>Fri, 06 Feb 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;这份指南旨在为那些在 Arch Linux (Hyprland) 环境下挣扎于办公软件兼容性的开发者提供一套“终极方案”。通过 WinApps，我们可以让 Microsoft Word 像原生应用一样漂浮在 Linux 桌面上。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h1&gt;深度指南：在 Arch Linux 中完美驱动 Microsoft Office (WinApps 篇)&lt;/h1&gt;
+&lt;p&gt;在 Linux 生态中，虽然有 LibreOffice 和 OnlyOffice，但在复杂的学术排版或企业协作中，原生 Microsoft Word 依然是不可替代的。本文将记录如何利用 KVM 虚拟化与 RDP 协议，在 Arch Linux 上优雅地运行 Office 套件。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;一、 虚拟化后端：构建稳固的底座&lt;/h2&gt;
+&lt;p&gt;首先，我们需要在 Arch Linux 上搭建高性能的 KVM/Libvirt 环境。&lt;/p&gt;
+&lt;h3&gt;1. 安装核心组件&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;sudo pacman -S qemu-full virt-manager libvirt edk2-ovmf dnsmasq freerdp
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;组件功能说明：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;qemu-full&lt;/code&gt;&lt;/strong&gt;：核心模拟器，负责虚拟化硬件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;virt-manager&lt;/code&gt;&lt;/strong&gt;：图形化界面，让你像操作普通软件一样管理虚拟机。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;libvirt&lt;/code&gt;&lt;/strong&gt;：管理虚拟机的后台守护进程。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;edk2-ovmf&lt;/code&gt;&lt;/strong&gt;：让虚拟机支持 UEFI 启动（现代 Windows 必需）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;dnsmasq&lt;/code&gt;&lt;/strong&gt;：为虚拟机提供网络地址分配（DHCP）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;freerdp&lt;/code&gt;&lt;/strong&gt;：远程桌面协议客户端，负责将 Word 窗口“拉”到 Linux 桌面。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. 权限与网络持久化&lt;/h3&gt;
+&lt;p&gt;为了避免每次操作虚拟机都要输入 &lt;code&gt;sudo&lt;/code&gt;，我们需要将当前用户加入相关的权限组，并确保虚拟网络随系统自启：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;权限分配&lt;/strong&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sudo usermod -aG libvirt,kvm $(whoami)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;注：执行此命令后，必须重启电脑或注销登录才能生效。&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;网络自启动设置&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;libvirt&lt;/code&gt; 默认的 NAT 网络（default）通常是关闭的。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sudo virsh net-start default        # 立即启动
+sudo virsh net-autostart default   # 设置开机自启
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;虚拟机自启动设置&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;如果你希望开机即享 Word 的秒开体验，可以让虚拟机后台静默启动：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sudo virsh autostart &amp;lt;你的虚拟机名称&amp;gt;  # 例如: win10
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;若要关闭自启，只需执行 &lt;code&gt;sudo virsh autostart --disable &amp;lt;名称&amp;gt;&lt;/code&gt;。&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3 下载 WinApps 源码&lt;/h3&gt;
+&lt;p&gt;由于 Arch Linux 的 AUR 仓库包名可能变动或版本滞后，推荐直接通过 GitHub 克隆最新源码以获得最佳兼容性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;安装必要依赖&lt;/strong&gt;： WinApps 核心依赖 &lt;code&gt;FreeRDP&lt;/code&gt; 进行窗口渲染，同时需要 &lt;code&gt;libnotify&lt;/code&gt; 处理系统通知。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sudo pacman -S freerdp libnotify binutils
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;克隆仓库&lt;/strong&gt;： 在你的家目录下执行克隆命令，这将创建一个 &lt;code&gt;winapps&lt;/code&gt; 文件夹，其中包含后续步骤所需的 &lt;code&gt;install&lt;/code&gt;、&lt;code&gt;oem&lt;/code&gt; 目录和 &lt;code&gt;setup.sh&lt;/code&gt; 脚本。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/winapps-org/winapps.git
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2&gt;二、Windows 虚拟机配置&lt;/h2&gt;
+&lt;h3&gt;1. 获取 Windows 10 ISO 镜像&lt;/h3&gt;
+&lt;p&gt;推荐使用 &lt;strong&gt;Windows 10 LTSC&lt;/strong&gt; 版本（精简、稳定、无广告）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;官方途径&lt;/strong&gt;：访问微软官网 &lt;a href=&quot;https://www.microsoft.com/zh-cn/software-download/windows10&quot;&gt;Windows 10 下载页&lt;/a&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;镜像站推荐&lt;/strong&gt;：搜索“I Tell You”或使用知名的镜像收录站下载 &lt;code&gt;LTSC 2021&lt;/code&gt; 版本的 ISO 文件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. 使用 virt-manager 创建虚拟机&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;打开 &lt;strong&gt;虚拟系统管理器 (virt-manager)&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;点击 &lt;strong&gt;“新建虚拟机”&lt;/strong&gt; -&amp;gt; 选择 &lt;strong&gt;“本地安装介质”&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;选择镜像&lt;/strong&gt;：浏览并选中你下载的 &lt;code&gt;.iso&lt;/code&gt; 文件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;配置硬件&lt;/strong&gt;：建议分配 &lt;strong&gt;4GB 内存&lt;/strong&gt; 和 &lt;strong&gt;4 核 CPU&lt;/strong&gt;，存储大小最小设置为30G，可以保证在安装完word、excel、ppt后还有大概3G的存储空间。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;自定义安装前勾选&lt;/strong&gt;：在最后一步勾选 &lt;strong&gt;“在安装前自定义配置”&lt;/strong&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;检查 &lt;strong&gt;固件&lt;/strong&gt; 是否为 &lt;code&gt;UEFI&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;检查 &lt;strong&gt;NIC (网络)&lt;/strong&gt; 是否连接到 &lt;code&gt;Virtual network &apos;default&apos; : NAT&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;3. Windows 内部核心设置&lt;/h3&gt;
+&lt;p&gt;进入 Windows 桌面后，必须完成以下三项安装以配合 WinApps。&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;A. 安装 spice-guest-tools (解决剪贴板与流畅度)&lt;/strong&gt;&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在 Windows 浏览器中下载：&lt;a href=&quot;https://www.google.com/search?q=https://www.spice-space.org/download/windows/spice-guest-tools/spice-guest-tools-latest.exe&quot;&gt;spice-guest-tools-latest.exe&lt;/a&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;以管理员身份运行，一路点击安装并信任驱动。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;重启 Windows&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&quot;https://0xav10086.space/_astro/20260206211143.BydOv8_k_Z2d3i5L.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;B. 注入 RDPApps.reg (开启远程应用模式)&lt;/strong&gt;&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;从 Arch 下载的 &lt;code&gt;winapps/oem&lt;/code&gt; 目录下找到 &lt;code&gt;RDPApps.reg&lt;/code&gt; 复制到虚拟机中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;双击运行&lt;/strong&gt;并确认导入。它会修改注册表，允许 Word 以独立窗口模式运行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4&gt;&lt;strong&gt;C. 运行 ExtractPrograms.ps1 (应用路径提取)&lt;/strong&gt;&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;进入虚拟机中解压的 &lt;code&gt;winapps/install&lt;/code&gt; 目录。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;右键点击 &lt;code&gt;ExtractPrograms.ps1&lt;/code&gt;，选择 &lt;strong&gt;“使用 PowerShell 运行”&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;该脚本会扫描你安装好的 Office 路径（如用 Office Tool Plus 安装的套件），为 Linux 端提供调用地址。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4&gt;&lt;strong&gt;D 使用 Office Tool Plus 安装 Office 套件&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;为了获得最纯净的 Office 安装体验，推荐使用 Office Tool Plus (OTP)。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;下载工具&lt;/strong&gt;：访问 &lt;a href=&quot;https://www.officetool.plus/&quot;&gt;officetool.plus&lt;/a&gt; 下载并运行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;部署套件&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;点击 &lt;strong&gt;“部署”&lt;/strong&gt; -&amp;gt; &lt;strong&gt;“添加产品”&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;产品选择 &lt;code&gt;Microsoft 365 企业应用版 - O364ProPlusRetail&lt;/code&gt;，应用程序按需选择，这里我只选择了word、excel、ppt。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;应用程序&lt;/strong&gt;：仅勾选你需要的组件（如 Word, Excel, PowerPoint），减少空间占用。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;设置&lt;/strong&gt;：架构选 &lt;code&gt;x64&lt;/code&gt;，更新通道选 &lt;code&gt;半年度企业通道&lt;/code&gt;，语言选 &lt;code&gt;简体中文&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;点击 &lt;strong&gt;“开始部署”&lt;/strong&gt; 等待安装完成。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;激活软件&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;在 &lt;strong&gt;“许可证管理”&lt;/strong&gt; 中安装&lt;code&gt;office Mondo 2016 批量许可证&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在 &lt;strong&gt;“KMS管理”&lt;/strong&gt; 中输入&lt;code&gt;kms.loli.beer&lt;/code&gt;，并设置主机。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;点击 &lt;strong&gt;“激活”&lt;/strong&gt; 选项卡。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;登录你的微软账号即可完成自动激活。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这是实现 &lt;strong&gt;Linux 与 Windows 剪贴板无缝同步&lt;/strong&gt;、&lt;strong&gt;鼠标流畅切换&lt;/strong&gt;以及&lt;strong&gt;分辨率自适应&lt;/strong&gt;的核心步骤。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;三、 WinApps 配置详解&lt;/h2&gt;
+&lt;p&gt;WinApps 的核心在于 &lt;code&gt;~/.config/winapps/winapps.conf&lt;/code&gt;。&lt;/p&gt;
+&lt;h3&gt;配置模板&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;VM_NAME=&quot;win10&quot;               # 必须与 virt-manager 中的虚拟机名一致
+RDP_USER=&quot;你的Windows用户名&quot;
+RDP_PASS=&quot;你的Windows密码&quot;
+RDP_IP=&quot;192.168.122.75&quot;       # 在 Windows 中输入 ipconfig 获取
+WAFLAVOR=&quot;libvirt&quot;            # 强制使用本地 KVM 模式
+MULTIMON=&quot;true&quot;               # 多显示器支持开关
+RDP_FLAGS=&quot;/cert:ignore /gfx:avc420 /network:auto /drive:home,/home/av10086 /dynamic-resolution +clipboard /multimon:force&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;我的配置&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;https://0xav10086.space/_astro/20260206211103.D5mQgxlL_8uqXb.webp&quot; alt=&quot;w-50%&quot; /&gt;
+&lt;img src=&quot;https://0xav10086.space/_astro/20260206211407.Bpm9lB71_Z1wD0u7.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;❯ cat ~/.config/winapps/winapps.conf
+#VM_NAME=&quot;DESKTOP-JC29B84&quot;
+VM_NAME=&quot;win10&quot;
+RDP_USER=&quot;vir-0xav10086&quot;
+RDP_PASS=&quot;abcd&quot;
+RDP_IP=&quot;192.168.122.75&quot;
+WAFLAVOR=&quot;libvirt&quot;
+RDP_SCALE=100
+MULTIMON=&quot;true&quot;
+DEBUG=&quot;true&quot;
+RDP_FLAGS=&quot;/cert:ignore /gfx:avc420 /network:auto /drive:home,/home/av10086 /dynamic-resolution +clipboard /multimon:force&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;关键参数解析：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;MULTIMON (Multi-Monitor)&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;为什么设为 &lt;code&gt;true&lt;/code&gt;？&lt;/strong&gt;：它允许 RDP 协议识别并利用 Linux 端的多个物理显示器。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;什么时候开启？&lt;/strong&gt;：当你的工作流涉及多显示器（如笔记本+外接显示器）时必须开启。开启后，你可以将 Word 窗口自由地从主屏拖动到副屏，而不会出现渲染黑屏或坐标偏移。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;RDP_FLAGS&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/dynamic-resolution&lt;/code&gt;：允许窗口在拉伸时自动调整内部 Windows 的分辨率。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/drive:home,...&lt;/code&gt;：将你的 Linux 家目录映射为 Windows 的 &lt;code&gt;Z:&lt;/code&gt; 盘，实现文件互通。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/multimon:force&lt;/code&gt;：强制 FreeRDP 使用全显示器布局，解决垂直堆叠显示器的渲染难题。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h2&gt;四、 为什么 Hyprland 适配不是必须的？&lt;/h2&gt;
+&lt;p&gt;在早期的 WinApps 教程中，通常会建议针对平铺管理器（如 Hyprland）编写大量的 &lt;code&gt;windowrule&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;现实情况是：&lt;/strong&gt; 随着 &lt;code&gt;xfreerdp&lt;/code&gt; 版本的更新以及我们在 &lt;code&gt;winapps.conf&lt;/code&gt; 中加入了 &lt;code&gt;/dynamic-resolution&lt;/code&gt; 和 &lt;code&gt;/multimon:force&lt;/code&gt; 参数，现代的 RDP 客户端已经能很好地处理窗口坐标。只要在 Windows 端运行了 &lt;code&gt;ExtractPrograms.ps1&lt;/code&gt; 和 &lt;code&gt;RDPApps.reg&lt;/code&gt;，Word 就会以真正的“独立窗口”模式运行，Hyprland 会将其识别为一个标准的 XWayland 窗口进行浮动处理，不再需要额外的语法补丁。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;五、 最终上线：安装与集成&lt;/h2&gt;
+&lt;p&gt;在完成上述所有配置并确保虚拟机处于“注销”状态后，在 Arch 终端执行：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cd ~/path/to/winapps
+./setup.sh --user
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;安装完成后，你可以在 &lt;code&gt;rofi&lt;/code&gt;、&lt;code&gt;wofi&lt;/code&gt; 或任何应用启动器中直接搜索 &lt;strong&gt;&quot;Word&quot;&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;六、 自动化管理命令总结&lt;/h2&gt;
+&lt;p&gt;为了让环境更“傻瓜化”，你需要掌握以下 &lt;code&gt;virsh&lt;/code&gt; 命令。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;需求&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;命令&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;开机自动运行虚拟机&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;sudo virsh autostart win10&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;关闭虚拟机自动启动&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;sudo virsh autostart --disable win10&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;手动强制开启虚拟机&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;virsh start win10&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;优雅地关闭虚拟机&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;virsh shutdown win10&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;查看虚拟机运行状态&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;virsh list --all&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;小提示：关于文件互通&lt;/h2&gt;
+&lt;p&gt;WinApps 的文件互通功能是建立在 &lt;strong&gt;RDP（远程桌面协议）&lt;/strong&gt; 基础上的，而不是 KVM 虚拟硬件本身。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h3&gt;1. 为什么你在当前窗口找不到“Linux 文件夹”？&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;控制台视图（你现在的画面）：&lt;/strong&gt; 你现在看到的是 Windows 系统的“物理屏幕”。在 Windows 看来，它只是运行在一台没有连接任何外部驱动器的电脑上。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;RDP 映射（WinApps 的工作方式）：&lt;/strong&gt; 当你通过 &lt;code&gt;rofi&lt;/code&gt; 启动 Word 时，&lt;code&gt;xfreerdp&lt;/code&gt; 会带着 &lt;code&gt;/drive:home,/home/av10086&lt;/code&gt; 这个参数连接 Windows。这时，RDP 协议会像“插 U 盘”一样，把你的 Linux 家目录临时挂载为一个&lt;strong&gt;网络驱动器&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h3&gt;2. 你该去哪里找到互通的文件？&lt;/h3&gt;
+&lt;p&gt;你不需要在 &lt;code&gt;virt-manager&lt;/code&gt; 的窗口里找。请按照以下步骤操作：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;启动 Word&lt;/strong&gt;：通过 &lt;code&gt;rofi&lt;/code&gt; 或终端启动 Word。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;点击“打开”&lt;/strong&gt;：在 Word 的起始界面点击 &lt;strong&gt;“打开 (Open)”&lt;/strong&gt; -&amp;gt; &lt;strong&gt;“这台电脑 (This PC)”&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;寻找网络位置&lt;/strong&gt;：在弹出的文件浏览器里，除了 &lt;code&gt;C:&lt;/code&gt; 盘，你应该能看到一个名为 &lt;strong&gt;&lt;code&gt;home 上的 av10086&lt;/code&gt;&lt;/strong&gt; 的磁盘（通常带有网络驱动器的图标）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr /&gt;
+&lt;h3&gt;3. 如何在 Windows “此电脑”中永久看到它？&lt;/h3&gt;
+&lt;p&gt;如果你希望在 Windows 的资源管理器里直接管理 Linux 文件，你有两种方法：&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;方法 A：通过 WinApps 的 RDP 链接启动（推荐）&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;如果你通过终端手动测试一次连接，这个文件夹就会出现：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;xfreerdp3 /u:&quot;vir-0xav10086&quot; /p:&quot;abcd&quot; /v:192.168.122.75 /cert:ignore /drive:home,/home/av10086
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;连接成功后，在弹出的 Windows 窗口里打开“此电脑”，你会发现多了一个 &lt;strong&gt;&lt;code&gt;home (\\tsclient)&lt;/code&gt;&lt;/strong&gt; 驱动器。&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;方法 B：在虚拟机里通过网络访问&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;即使不通过 RDP，Windows 和 Arch 其实也在同一个虚拟局域网里：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在 Windows 资源管理器的地址栏输入：&lt;code&gt;\\192.168.122.1&lt;/code&gt;（这是 Arch 在虚拟网桥中的默认 IP）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果你在 Arch 上配置了 &lt;strong&gt;Samba&lt;/strong&gt; 服务，这里就会出现文件夹。 &lt;em&gt;注：WinApps 默认不推荐这种方法，因为它比 RDP 映射要复杂得多。&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr /&gt;
+&lt;h3&gt;4. 一个让体验更“优雅”的小贴士&lt;/h3&gt;
+&lt;p&gt;既然你已经配置好了 WinApps，最优雅的文件互通方式其实是&lt;strong&gt;文件关联&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在 Arch 的文件管理器（如 Dolphin 或 Thunar）中，右键点击一个 &lt;code&gt;.docx&lt;/code&gt; 文件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;选择 &lt;strong&gt;“属性”&lt;/strong&gt; -&amp;gt; &lt;strong&gt;“打开方式”&lt;/strong&gt; -&amp;gt; &lt;strong&gt;“Word”&lt;/strong&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;以后你只需要在 Arch 里双击文档，它就会自动“穿越”到虚拟机里被 Word 打开，你根本不需要去 Windows 里翻找文件夹。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;总结：&lt;/strong&gt; 你没看到文件夹，是因为你正在看“裸机”的显示器。&lt;strong&gt;请尝试通过 &lt;code&gt;rofi&lt;/code&gt; 打开 Word，然后在 Word 的“打开”菜单里看看，那个 &lt;code&gt;home&lt;/code&gt; 驱动器是不是已经在那儿等着你了？&lt;/strong&gt;&lt;/p&gt;
+&lt;h3&gt;结语&lt;/h3&gt;
+&lt;p&gt;这套方案通过 libvirt 保证了性能，通过 Spice 保证了交互，通过 WinApps 保证了体验。对于 Arch 用户来说，这或许是目前在 Linux 下处理 &lt;code&gt;.docx&lt;/code&gt; 文档最专业、最“优雅”的方式。
+&lt;img src=&quot;https://0xav10086.space/_astro/20260206212013.CNnxDP7V_Z268YSj.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;h1&gt;参考资料&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.bilibili.com/video/BV1f1421Q7Li/&quot;&gt;【Office】Office Tool Plus安装激活Office保姆级使用教程&lt;/a&gt;
+&lt;a href=&quot;https://www.microsoft.com/zh-cn/software-download/windows10&quot;&gt;Windows 10 下载页&lt;/a&gt;&lt;/p&gt;
+</content:encoded></item><item><title>how-to-configuration-HTTPS</title><link>https://0xav10086.space/posts/how-to-configuration-https/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-configuration-https/</guid><pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;第一步：获取 Cloudflare 名称服务器&lt;/h2&gt;
 &lt;p&gt;在操作阿里云之前，请确保你已经：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -46,7 +879,7 @@
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;修改后的DNS服务器如下图所示：
-&lt;img src=&quot;.%5CResource%5C20260129012443.png&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;img src=&quot;https://0xav10086.space/_astro/20260129012443.DW7jQocO_1Ecf2C.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
 &lt;hr /&gt;
 &lt;h2&gt;第三步：等待生效&lt;/h2&gt;
 &lt;ul&gt;
@@ -67,8 +900,8 @@
 &lt;p&gt;&lt;strong&gt;DNSSEC&lt;/strong&gt;：如果你在阿里云开启了 DNSSEC 保护，&lt;strong&gt;必须先在阿里云关闭它&lt;/strong&gt;，否则修改 DNS 服务器会导致解析彻底中断。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;配置之后的Cloudflare的DNS记录如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;.%5CResource%5C20260129012215.png&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;配置之后的Cloudflare的DNS记录如下图所示：
+&lt;img src=&quot;https://0xav10086.space/_astro/20260129012215.Za1zSgj8_Z2wT6kK.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;为了支持 HTTPS，最稳妥且主流的方法是先配置 HTTP，然后使用 &lt;strong&gt;Certbot (Let&apos;s Encrypt)&lt;/strong&gt; 自动获取证书并升级到 HTTPS。&lt;/p&gt;
 &lt;hr /&gt;
 &lt;h2&gt;第四步：创建 Nginx 配置文件&lt;/h2&gt;
@@ -170,7 +1003,7 @@ apt install certbot python3-certbot-nginx -y
 &lt;p&gt;&lt;strong&gt;权限&lt;/strong&gt;：如果访问报 403 错误，执行 &lt;code&gt;chmod -R 755 /var/www/blog&lt;/code&gt; 确保 Nginx 有权读取文件。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content:encoded></item><item><title>how-to-use-github-actions</title><link>https://0xav10086.space/posts/how-to-use-github-actions/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-use-github-actions/</guid><description>这个教程将会教你如何使用Github的actions来自动化部署。</description><pubDate>Thu, 29 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;1. GitHub 网页端设置：开启与保护&lt;/h2&gt;
+</content:encoded></item><item><title>how-to-use-github-actions</title><link>https://0xav10086.space/posts/how-to-use-github-actions/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-use-github-actions/</guid><pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;1. GitHub 网页端设置：开启与保护&lt;/h2&gt;
 &lt;p&gt;由于我的仓库是 &lt;strong&gt;Fork&lt;/strong&gt; 来的，GitHub 为了安全会默认锁定自动化脚本。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -191,7 +1024,7 @@ apt install certbot python3-certbot-nginx -y
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&quot;.%5CResource%5C20260129010211.png&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://0xav10086.space/_astro/20260129010211.R-0o43eG_1kNP0R.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
 &lt;hr /&gt;
 &lt;h2&gt;2. CI.yml 编写：自动化的指令集&lt;/h2&gt;
 &lt;p&gt;针对“本地构建 &lt;code&gt;dist&lt;/code&gt;，GitHub 搬运”的需求，核心配置如下：&lt;/p&gt;
@@ -250,7 +1083,7 @@ apt install certbot python3-certbot-nginx -y
 &lt;p&gt;手动创建目标目录：&lt;code&gt;mkdir -p /var/www/blog&lt;/code&gt;。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;配置 Nginx：将 &lt;code&gt;root&lt;/code&gt; 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照[[配置HTTPS]]这篇教程。&lt;/p&gt;
+&lt;p&gt;配置 Nginx：将 &lt;code&gt;root&lt;/code&gt; 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照[[how-to-configuration-HTTPS]]这篇教程。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
@@ -335,7 +1168,7 @@ PermitRootLogin yes
 &lt;p&gt;&lt;strong&gt;红色叉号 (❌)&lt;/strong&gt;：出错了。点击进去看具体的错误日志（比如 &lt;code&gt;Permission denied&lt;/code&gt; 或者 &lt;code&gt;No such file or directory&lt;/code&gt;）。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&quot;.%5CResource%5C20260129010902.png&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://0xav10086.space/_astro/20260129010902.BEUgcVey_292rp9.webp&quot; alt=&quot;w-50%&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;当在 Actions 页面看到 &lt;strong&gt;红叉 (❌)&lt;/strong&gt; 时，可以根据日志快速定位：&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
