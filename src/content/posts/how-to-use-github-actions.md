@@ -1,28 +1,29 @@
 ---
 title: how-to-use-github-actions
-published: 2026-01-29
-description: '这个教程将会教你如何使用Github的actions来自动化部署。'
-image: '.\Resource\20260129010902.png'
-tags: [Github, tutorial, howto]
-category: 'Git'
-draft: false 
-lang: ''
+published: 2026-01-02
+category: git
+tags:
+  - git
+  - howto
+  - tutorial
+  - archive
+summary: ""
 ---
 ## 1. GitHub 网页端设置：开启与保护
 
 由于我的仓库是 **Fork** 来的，GitHub 为了安全会默认锁定自动化脚本。
 
 - **启用 Actions**：必须手动进入仓库的 **Actions** 选项卡，点击 **"I understand my workflows, go ahead and enable them"** 才能激活工作流。
-
+    
 - **配置加密保险箱 (Secrets)**：
-
+    
     - **路径**：`Settings -> Secrets and variables -> Actions -> Repository secrets -> New repository secrets`。
-
+        
     - **原则**：千万不要在代码中明文写入 IP、用户名或私钥。
-
+        
     - **必填条目**：`SSH_HOST` (IP)、`SSH_USER` (通常为 root)、`SSH_KEY` (完整的 **私钥** 内容)。
-
-![w-50%](.\Resource\20260129010211.png)
+        
+![w-50%](./Resource/20260129010211.webp)
 
 ---
 
@@ -31,12 +32,12 @@ lang: ''
 针对“本地构建 `dist`，GitHub 搬运”的需求，核心配置如下：
 
 - **触发条件 (`on`)**：设置为 `push: branches: [master]`，确保你每次 `git push` 都会触发部署。
-
+    
 - **搬运工具 (`rsync`)**：推荐使用 `Burnett01/rsync-deployments`，因为它比单纯的 SSH 命令更擅长处理文件夹同步。
-
+    
 - **关键代码段**：
-
-
+    
+    
 ```yml
     with:
       switches: -avzr --delete       # -a 同步属性, --delete 保持目标与源完全一致
@@ -55,24 +56,24 @@ lang: ''
 VPS 是部署的终点，必须配置好接收权限。
 
 - **SSH 密钥对**：
-
+    
     - 使用 `ed25519` 算法生成，更安全高效。
-
+        
     - **公钥** (`.pub`) 必须存放在 VPS 的 `~/.ssh/authorized_keys` 中。
-
+        
     - **私钥** 交给 GitHub Secrets。
-
+        
 - **权限规范**（SSH 极其挑剔）：
-
+    
     - `~/.ssh` 目录：`700`。
-
+        
     - `authorized_keys` 文件：`600`。
-
+        
 - **环境准备**：
-
+    
     - 手动创建目标目录：`mkdir -p /var/www/blog`。
-
-    - 配置 Nginx：将 `root` 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照[[配置HTTPS]]这篇教程。
+        
+    - 配置 Nginx：将 `root` 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照[[how-to-configuration-HTTPS]]这篇教程。
 
 ### 详细的配置流程
 以下是详细的配置流程。请按顺序在 VPS 上检查：
@@ -105,15 +106,15 @@ chmod 755 /root
 请确认公钥是否**完整且正确**地存放在了 `authorized_keys` 文件中：
 
 1. 查看公钥内容：
-
-
+    
+    
     ```bash
     cat ~/.ssh/id_ed25519.pub
     ```
-
+    
 2. 查看 `authorized_keys` 文件：
-
-
+    
+    
     ```bash
     cat ~/.ssh/authorized_keys
     ```
@@ -124,7 +125,7 @@ chmod 755 /root
     ```Bash
     echo "这里粘贴你刚才查看到的 id_ed25519.pub 完整内容" > ~/.ssh/authorized_keys
     ```
-
+    
 
 ---
 
@@ -133,26 +134,27 @@ chmod 755 /root
 如果在 `SSH_USER` 中填的是 `root`，很多 Linux 系统默认是禁止 root 通过密钥远程登录的。
 
 1. 打开 SSH 配置文件：
-
-
+    
+    
     ```Bash
     nano /etc/ssh/sshd_config
     ```
-
+    
 2. 查找并确保以下两行没有被注释（前面没有 `#`）且设置正确：
-
-
+    
+    
     ```Plaintext
     PubkeyAuthentication yes
     PermitRootLogin yes
     ```
-
+    
 3. 如果修改了文件，记得重启 SSH 服务：
-
-
+    
+    
     ```Bash
     systemctl restart ssh
     ```
+    
 
 ---
 
@@ -161,7 +163,7 @@ chmod 755 /root
 请再次确认你在 GitHub **Secrets** 中填入的是 **私钥**（即没有 `.pub` 后缀的那个文件）。
 
 - **错误做法**：把 `id_ed25519.pub`（公钥）填到了 GitHub。
-
+    
 - **正确做法**：把 `id_ed25519`（内容以 `-----BEGIN OPENSSH PRIVATE KEY-----` 开头）填到了 GitHub。
 
 ---
@@ -170,10 +172,10 @@ chmod 755 /root
 
 你可以点击 GitHub 上的 **"Run workflow"**。如果权限配置正确，你会看到日志显示：
 - **绿色对勾 (✔️)**：恭喜，部署成功。
-
+    
 - **红色叉号 (❌)**：出错了。点击进去看具体的错误日志（比如 `Permission denied` 或者 `No such file or directory`）。
 
-![w-50%](.\Resource\20260129010902.png)
+![w-50%](./Resource/20260129010902.webp)
 
 当在 Actions 页面看到 **红叉 (❌)** 时，可以根据日志快速定位：
 
@@ -191,11 +193,11 @@ chmod 755 /root
 以后更新博客只需要：
 
 1. **本地**：写文章。
-
+    
 2. **本地**：`pnpm build`（生成最新的 `dist`）。
-
+    
 3. **本地**：`git add .` -> `git commit` -> `git push`。
-
+    
 4. **云端**：GitHub 自动把文件推送到 VPS。
-
+    
 5. **结果**：刷新 `0xav10086.space` 即可看到更新。
