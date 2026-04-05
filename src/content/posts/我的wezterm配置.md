@@ -1,10 +1,14 @@
 ---
-title: 未命名
+title: 我的wezterm配置
 published: 2026-03-25
-description:
-image:
-tags: []
-category:
+description: 这个教程将会教你如何让Windows的终端更好用。
+image: '""'
+tags:
+  - Windows
+  - archive
+  - howto
+  - bash
+category: Windows
 draft: false
 pinned: false
 comment: true

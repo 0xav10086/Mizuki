@@ -1,4 +1,1084 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Mizuki</title><description>One demo website</description><link>https://0xav10086.space/</link><language>zh_CN</language><item><title>asyncio-异步编程</title><link>https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</link><guid isPermaLink="true">https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</guid><description>这个教程将会教你如何使用asyncio进行异步编程。</description><pubDate>Sat, 07 Feb 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;用asyncio进行异步编程&lt;/h1&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Mizuki</title><description>One demo website</description><link>https://0xav10086.space/</link><language>zh_CN</language><item><title>云端配置托管与极速编译终极指南</title><link>https://0xav10086.space/posts/%E4%BA%91%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%89%98%E7%AE%A1%E4%B8%8E%E6%9E%81%E9%80%9F%E7%BC%96%E8%AF%91%E7%BB%88%E6%9E%81%E6%8C%87%E5%8D%97/</link><guid isPermaLink="true">https://0xav10086.space/posts/%E4%BA%91%E7%AB%AF%E9%85%8D%E7%BD%AE%E6%89%98%E7%AE%A1%E4%B8%8E%E6%9E%81%E9%80%9F%E7%BC%96%E8%AF%91%E7%BB%88%E6%9E%81%E6%8C%87%E5%8D%97/</guid><description>这个教程将会教你如何让服务器支持订阅链接。</description><pubDate>Fri, 03 Apr 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;🚀 云端配置托管终极指南：打造跨平台无感同步的私人代理网络&lt;/h1&gt;
+&lt;p&gt;在多设备（Windows 电脑、Arch Linux、Android 手机 + Box for KernelSU）环境下，手动维护 Clash 的 YAML 配置文件是一场灾难。每次添加规则或更换机场，都需要在各个设备间来回复制、重启内核，极度繁琐且容易出错。&lt;/p&gt;
+&lt;p&gt;这篇文档将带你彻底打破本地维护的桎梏，通过 VPS 搭建一个 **“全云端托管 + 自动化编译”**的代理控制中心。&lt;/p&gt;
+&lt;h2&gt;📋 前置条件与环境准备（必读）&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;推荐环境&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VPS：Ubuntu 22.04 / Debian 12 或 Arch Linux（推荐 1 核 1G 以上）&lt;/li&gt;
+&lt;li&gt;已安装：&lt;code&gt;nginx&lt;/code&gt;、&lt;code&gt;curl&lt;/code&gt;、&lt;code&gt;cron&lt;/code&gt;（或 &lt;code&gt;crontab&lt;/code&gt;）、&lt;code&gt;certbot&lt;/code&gt;（已申请 Let’s Encrypt 证书）&lt;/li&gt;
+&lt;li&gt;拥有独立域名（例如 &lt;code&gt;yourdomain.com&lt;/code&gt;），并已将 &lt;code&gt;dash.yourdomain.com&lt;/code&gt; 解析到 VPS&lt;/li&gt;
+&lt;li&gt;本地已准备好一份完整的 Clash 配置文件（用于提取私人规则）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;替换提示&lt;/strong&gt;：
+本文所有出现 &lt;code&gt;0xav10086.space&lt;/code&gt; 的地方，请全部替换为你的域名。
+脚本中的路径 &lt;code&gt;/opt/flowcollect/&lt;/code&gt; 可根据需要修改，但需保持一致。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;安全建议&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;运行脚本前执行 &lt;code&gt;chmod 700 /opt/flowcollect/*.sh&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Nginx 仪表盘路径建议添加 IP 白名单或 basic auth&lt;/li&gt;
+&lt;li&gt;定期备份 &lt;code&gt;/opt/flowcollect/web/&lt;/code&gt; 目录&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;🌟 架构优势：为什么这是终极优雅方案？&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;一处修改，全端同步&lt;/strong&gt;：所有配置（节点、分流规则、策略组）全部存放在 VPS。本地设备只需填入一个固定的订阅链接，日后增删规则，只需在云端修改，所有设备自动拉取生效。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;极速加载（0 客户端运算）&lt;/strong&gt;：彻底摒弃在客户端让 Clash 去解析复杂的 &lt;code&gt;domain&lt;/code&gt; 格式和庞大的外置规则库。VPS 会充当“持续集成服务器（CI）”，将所有上游规则清洗、格式化并编译为 7 个标准的 &lt;code&gt;classical&lt;/code&gt; 模块。客户端只需“无脑”加载，启动和重载速度成倍提升。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;彻底解耦，绝对安全&lt;/strong&gt;：私人手写规则（如内网域名、特定网站）与云端开源规则集（如 Google、Steam、去广告）被巧妙的锚点隔离。VPS 脚本自动更新云端规则时，绝对不会覆盖你的私人规则。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;无痛应对“阅后即焚”&lt;/strong&gt;：VPS 脚本负责拿着一次性 Token 去机场提货并固化成节点文件，完美解决某些客户端无法直接更新一次性订阅链接的问题。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr /&gt;
+&lt;h2&gt;🛠️ 第一阶段：VPS 基础设施与 Nginx 配置&lt;/h2&gt;
+&lt;p&gt;首先，在 VPS 上建立清晰的目录结构，并配置 Nginx 以确保 Clash 客户端能正确识别下载的文件。&lt;/p&gt;
+&lt;h3&gt;1. 目录结构设计&lt;/h3&gt;
+&lt;p&gt;在 VPS 上创建专属的工作目录：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mkdir -p /opt/flowcollect/web/RuleSet
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/opt/flowcollect/web/&lt;/code&gt;：存放主配置文件、节点文件 (&lt;code&gt;nodes.yaml&lt;/code&gt;) 和规则清单 (&lt;code&gt;86_rule_set_collect.csv&lt;/code&gt;)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/opt/flowcollect/web/RuleSet/&lt;/code&gt;：专门存放编译后的 7 个终极规则集文件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. Nginx 反向代理与文件放行&lt;/h3&gt;
+&lt;p&gt;修改 Nginx 配置（如 &lt;code&gt;/etc/nginx/sites-available/my_sites&lt;/code&gt;），确保客户端下载时不会因为 MIME 类型错误而报错：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;server {
+    server_name www.0xav10086.space 0xav10086.space;
+    root /var/www/blog;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml;
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/0xav10086.space/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/0xav10086.space/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+server {
+    server_name dash.0xav10086.space;
+
+		location /RuleSet/ {
+        alias /opt/flowcollect/web/RuleSet/;
+        default_type text/plain;
+		}
+
+    location = /cf_node.yaml {
+        alias /opt/flowcollect/web/cf_node.yaml;
+        default_type text/plain;
+    }
+
+    location = /bemly_node.yaml {
+        alias /opt/flowcollect/web/bemly_node.yaml;
+        default_type text/plain;
+    }
+
+    location = /shanhuyun_node.yaml {
+        alias /opt/flowcollect/web/shanhuyun_node.yaml;
+        default_type text/plain;
+    }
+
+    location = /power_by_0xav10086 {
+        alias /opt/flowcollect/web/power_by_0xav10086;
+        default_type text/plain;
+        add_header Content-Disposition &apos;attachment; filename=PowerBy0xav10086&apos;;
+    }
+
+
+    location / {
+        proxy_pass http://127.0.0.1:8686;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection &quot;upgrade&quot;;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/0xav10086.space/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/0xav10086.space/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+    if ($host = www.0xav10086.space) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = 0xav10086.space) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name www.0xav10086.space 0xav10086.space;
+    return 404; # managed by Certbot
+}
+
+server {
+    if ($host = dash.0xav10086.space) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name dash.0xav10086.space;
+
+    return 404; # managed by Certbot
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;重启 Nginx 生效：&lt;code&gt;sudo systemctl reload nginx&lt;/code&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;📦 第二阶段：自动化节点搬运工&lt;/h2&gt;
+&lt;h3&gt;获取机场的配置文件&lt;/h3&gt;
+&lt;p&gt;编写一个脚本，负责将机场的订阅链接拉取并固化到本地。&lt;/p&gt;
+&lt;p&gt;新建 &lt;code&gt;/opt/flowcollect/get_nodes.sh&lt;/code&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+
+# 定义颜色输出，让终端提示更直观
+GREEN=&apos;\033[0;32m&apos;
+YELLOW=&apos;\033[1;33m&apos;
+RED=&apos;\033[0;31m&apos;
+NC=&apos;\033[0m&apos; # 恢复默认颜色
+
+URL=&quot;&quot;
+NODE_NAME=&quot;nodes.yaml&quot; # 默认名称
+
+# 1. 智能参数解析：判断哪个参数是链接，哪个是名称
+if [[ &quot;$1&quot; =~ ^https?:// ]]; then
+        URL=&quot;$1&quot;
+        [ -n &quot;$2&quot; ] &amp;amp;&amp;amp; NODE_NAME=&quot;$2&quot;
+elif [[ &quot;$2&quot; =~ ^https?:// ]]; then
+        URL=&quot;$2&quot;
+        NODE_NAME=&quot;$1&quot;
+else
+        # 如果两个都不是链接，仅保存第一个作为名字（随后抛出错误）
+        [ -n &quot;$1&quot; ] &amp;amp;&amp;amp; NODE_NAME=&quot;$1&quot;
+fi
+
+# 2. 强制校验订阅链接
+if [ -z &quot;$URL&quot; ]; then
+        echo -e &quot;${RED}❌ 错误：未检测到有效的订阅链接 (必须包含 http:// 或 https://)。${NC}&quot;
+        echo -e &quot;用法 1: ./get_nodes.sh &amp;lt;订阅链接&amp;gt; [期望文件名]&quot;
+        echo -e &quot;用法 2: ./get_nodes.sh [期望文件名] &amp;lt;订阅链接&amp;gt;&quot;
+        exit 1
+fi
+
+# 3. 规范化文件名 (如果没有 .yaml 后缀，自动补全)
+if [[ ! &quot;$NODE_NAME&quot; == *.yaml ]]; then
+        NODE_NAME=&quot;${NODE_NAME}.yaml&quot;
+fi
+
+OUTPUT_FILE=&quot;/opt/flowcollect/web/$NODE_NAME&quot;
+
+echo -e &quot;${YELLOW}⏳ 正在从机场获取最新节点...${NC}&quot;
+echo -e &quot;🔗 链接: $URL&quot;
+echo -e &quot;📦 目标: $OUTPUT_FILE&quot;
+
+# 4. 执行下载
+curl -sS -A &quot;clash.meta&quot; &quot;$URL&quot; -o &quot;$OUTPUT_FILE&quot;
+
+if [ $? -ne 0 ]; then
+        echo -e &quot;${RED}❌ 拉取失败，请检查网络或机场链接是否有效。${NC}&quot;
+        exit 1
+fi
+
+echo -e &quot;${GREEN}✅ 节点文件已成功拉取！${NC}&quot;
+
+# 5. Nginx 自动化配置注入
+NGINX_CONF=&quot;/etc/nginx/sites-available/my_sites&quot;
+
+# 检查 Nginx 文件是否存在
+if [ ! -f &quot;$NGINX_CONF&quot; ]; then
+        echo -e &quot;${YELLOW}⚠️ 未找到 Nginx 配置文件 ($NGINX_CONF)，请手动将以下内容添加至仪表盘 server 块中：${{NC}&quot;
+        cat &amp;lt;&amp;lt;EOF
+    location = /$NODE_NAME {
+        alias $OUTPUT_FILE;
+        default_type text/plain;
+    }
+EOF
+        exit 0
+fi
+
+# 检查 Nginx 配置文件中是否已经存在该节点的路由
+if grep -q &quot;location = /$NODE_NAME&quot; &quot;$NGINX_CONF&quot;; then
+        echo -e &quot;${GREEN}✅ 检测到 Nginx 已存在 /$NODE_NAME 的路由，无需重复添加。${NC}&quot;
+        echo -e &quot;🎉 你的专属订阅链接为: ${YELLOW}https://dash.0xav10086.space/$NODE_NAME${NC}&quot;
+else
+        echo -e &quot;${YELLOW}⚙️ 正在自动修改 Nginx 配置...${NC}&quot;
+
+        # 使用 sed 在仪表盘的 server_name 下方安全注入 location 块
+        sed -i &apos;/server_name dash\.0xav10086\.space;/a \
+    \
+    # 自动生成的订阅节点下发配置 (&apos;&quot;$NODE_NAME&quot;&apos;)\
+    location = /&apos;&quot;$NODE_NAME&quot;&apos; {\
+        alias &apos;&quot;$OUTPUT_FILE&quot;&apos;;\
+        default_type text/plain;\
+    }&apos; &quot;$NGINX_CONF&quot;
+
+        # 测试 Nginx 语法
+        nginx -t &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+        if [ $? -eq 0 ]; then
+                systemctl reload nginx
+                echo -e &quot;${GREEN}✅ Nginx 配置已成功注入并重载！${NC}&quot;
+                echo -e &quot;🎉 你的专属订阅链接为: ${YELLOW}https://dash.0xav10086.space/$NODE_NAME${NC}&quot;
+        else
+                echo -e &quot;${RED}❌ Nginx 语法测试失败，请立刻使用 &apos;nano $NGINX_CONF&apos; 检查文件！${NC}&quot;
+        fi
+fi
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;赋予权限：&lt;code&gt;chmod +x /opt/flowcollect/get_nodes.sh&lt;/code&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;如果你的机场无法通过本脚本拉取下来，也可以将机场提供的订阅地址拉取到本地后，将机场的配置文件推送到与该脚本同级的路径中。&lt;/p&gt;
+&lt;h3&gt;获取私人规则骨架&lt;/h3&gt;
+&lt;p&gt;编写一个脚本，负责以自己的配置文件中的规则来创建规则骨架。这要求在运行脚本的同级目录下，存在你的配置文件，记得修改第三行的内容。&lt;/p&gt;
+&lt;p&gt;新建 &lt;code&gt;/opt/flowcollect/parse_private_rules.sh&lt;/code&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+
+INPUT_FILE=&quot;fscn-master.yaml&quot;
+
+if [ ! -f &quot;$INPUT_FILE&quot; ]; then
+        echo &quot;❌ 找不到源文件 $INPUT_FILE&quot;
+        exit 1
+fi
+
+echo &quot;⏳ 开始提取私人规则...&quot;
+
+# 初始化 7 个纯净的规则集文件
+init_file() {
+        local file=$1
+        echo &quot;payload:&quot; &amp;gt;&quot;$file&quot;
+        echo &quot;  # ==========================================&quot; &amp;gt;&amp;gt;&quot;$file&quot;
+        echo &quot;  # [MANUAL_START] Private&quot; &amp;gt;&amp;gt;&quot;$file&quot;
+        echo &quot;  # ==========================================&quot; &amp;gt;&amp;gt;&quot;$file&quot;
+}
+
+init_file &quot;86JPRules.yaml&quot;
+init_file &quot;86HKRules.yaml&quot;
+init_file &quot;86USRules.yaml&quot;
+init_file &quot;86BemlyRules.yaml&quot;
+init_file &quot;86SwitchRules.yaml&quot;
+init_file &quot;86DirectRules.yaml&quot;
+init_file &quot;86RejectRules.yaml&quot;
+
+get_target_file() {
+        case &quot;$1&quot; in
+        Japan) echo &quot;86JPRules.yaml&quot; ;;
+        HK) echo &quot;86HKRules.yaml&quot; ;;
+        US) echo &quot;86USRules.yaml&quot; ;;
+        bemly) echo &quot;86BemlyRules.yaml&quot; ;;
+        Switch) echo &quot;86SwitchRules.yaml&quot; ;;
+        DIRECT) echo &quot;86DirectRules.yaml&quot; ;;
+        REJECT) echo &quot;86RejectRules.yaml&quot; ;;
+        *) echo &quot;&quot; ;;
+        esac
+}
+
+in_rules=0
+while IFS= read -r line; do
+        line=$(echo &quot;$line&quot; | tr -d &apos;\r&apos;)
+        if [[ &quot;$line&quot; =~ ^rules: ]]; then
+                in_rules=1
+                continue
+        fi
+        if [[ $in_rules -eq 1 &amp;amp;&amp;amp; &quot;$line&quot; =~ ^[a-zA-Z] ]]; then in_rules=0; fi
+
+        if [[ $in_rules -eq 1 &amp;amp;&amp;amp; &quot;$line&quot; =~ ^[[:space:]]*-[[:space:]]*(.+) ]]; then
+                rule_content=&quot;${BASH_REMATCH[1]}&quot;
+                rule_content=&quot;${rule_content//\&quot;/}&quot;
+                rule_content=&quot;${rule_content//\&apos;/}&quot;
+                rule_content=&quot;${rule_content%%#*}&quot;
+                rule_content=$(echo &quot;$rule_content&quot; | xargs)
+
+                if [[ -z &quot;$rule_content&quot; ]]; then continue; fi
+
+                clean_rule=&quot;${rule_content%,no-resolve}&quot;
+                target=&quot;${clean_rule##*,}&quot;
+                payload=&quot;${clean_rule%,*}&quot;
+                type=&quot;${payload%%,*}&quot;
+
+                if [[ &quot;$rule_content&quot; == *&quot;,no-resolve&quot; ]]; then
+                        payload=&quot;${payload},no-resolve&quot;
+                fi
+
+                target_file=$(get_target_file &quot;$target&quot;)
+                if [[ -z &quot;$target_file&quot; ]]; then continue; fi
+
+                # 只提取非系统内置且非 RULE-SET 的私人规则
+                if [[ &quot;$type&quot; != &quot;RULE-SET&quot; &amp;amp;&amp;amp; &quot;$type&quot; != &quot;GEOIP&quot; &amp;amp;&amp;amp; &quot;$type&quot; != &quot;MATCH&quot; &amp;amp;&amp;amp; &quot;$type&quot; != &quot;NETWORK&quot; ]]; then
+                        echo &quot;  - $payload&quot; &amp;gt;&amp;gt;&quot;$target_file&quot;
+                fi
+        fi
+done &amp;lt;&quot;$INPUT_FILE&quot;
+
+# 封口
+close_file() {
+        local file=$1
+        echo &quot;  # ==========================================&quot; &amp;gt;&amp;gt;&quot;$file&quot;
+        echo &quot;  # [MANUAL_END] Private&quot; &amp;gt;&amp;gt;&quot;$file&quot;
+        echo &quot;  # ==========================================&quot; &amp;gt;&amp;gt;&quot;$file&quot;
+        echo &quot;✅ 已生成纯私人规则: $file&quot;
+}
+
+for f in 86*.yaml; do
+        if [[ &quot;$f&quot; != &quot;$INPUT_FILE&quot; ]]; then close_file &quot;$f&quot;; fi
+done
+
+echo &quot;🎉 私人规则提取完成！请将这 7 个文件上传到 VPS 的 /opt/flowcollect/web/RuleSet 目录。&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;获取私人规则集清单&lt;/h3&gt;
+&lt;p&gt;编写一个脚本，负责以自己的配置文件中的规则来创建规则集配置表单。这要求在运行脚本的同级目录下，存在你的配置文件，记得修改第三行的内容。&lt;/p&gt;
+&lt;p&gt;新建 &lt;code&gt;/opt/flowcollect/generate_csv.sh&lt;/code&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+
+INPUT_FILE=&quot;fscn-master-2604031459.yaml&quot;
+OUTPUT_FILE=&quot;86_rule_set_collect.csv&quot;
+
+if [ ! -f &quot;$INPUT_FILE&quot; ]; then
+        echo &quot;❌ 找不到源文件 $INPUT_FILE&quot;
+        exit 1
+fi
+
+echo &quot;⏳ 正在解析 $INPUT_FILE，生成云端规则收集表...&quot;
+
+# 声明关联数组用于存储 provider 的详细信息
+declare -A urls
+declare -A behaviors
+declare -A paths
+declare -A targets
+
+in_providers=0
+current_provider=&quot;&quot;
+
+# ==========================================
+# 第一阶段：提取 rule-providers 信息
+# ==========================================
+while IFS= read -r line; do
+        line=$(echo &quot;$line&quot; | tr -d &apos;\r&apos;) # 剔除 Windows 回车符
+        if [[ &quot;$line&quot; =~ ^rule-providers: ]]; then
+                in_providers=1
+                continue
+        fi
+        if [[ $in_providers -eq 1 &amp;amp;&amp;amp; &quot;$line&quot; =~ ^[a-zA-Z] ]]; then in_providers=0; fi
+
+        if [[ $in_providers -eq 1 ]]; then
+                # 匹配 provider 名称
+                if [[ &quot;$line&quot; =~ ^[[:space:]]{2}([A-Za-z0-9_-]+): ]]; then
+                        current_provider=&quot;${BASH_REMATCH[1]}&quot;
+                # 匹配 behavior
+                elif [[ &quot;$line&quot; =~ behavior:[[:space:]]*([a-zA-Z]+) ]]; then
+                        behaviors[&quot;$current_provider&quot;]=&quot;${BASH_REMATCH[1]}&quot;
+                # 匹配 url (智能去引号)
+                elif [[ &quot;$line&quot; =~ url:[[:space:]]*[\&quot;\&apos;]?([^\&quot;\&apos;]+)[\&quot;\&apos;]? ]]; then
+                        urls[&quot;$current_provider&quot;]=&quot;${BASH_REMATCH[1]}&quot;
+                # 匹配 path (智能去引号)
+                elif [[ &quot;$line&quot; =~ path:[[:space:]]*[\&quot;\&apos;]?([^\&quot;\&apos;]+)[\&quot;\&apos;]? ]]; then
+                        paths[&quot;$current_provider&quot;]=&quot;${BASH_REMATCH[1]}&quot;
+                fi
+        fi
+done &amp;lt;&quot;$INPUT_FILE&quot;
+
+# ==========================================
+# 第二阶段：提取 rules 中规则集的映射关系
+# ==========================================
+in_rules=0
+while IFS= read -r line; do
+        line=$(echo &quot;$line&quot; | tr -d &apos;\r&apos;)
+        if [[ &quot;$line&quot; =~ ^rules: ]]; then
+                in_rules=1
+                continue
+        fi
+        if [[ $in_rules -eq 1 &amp;amp;&amp;amp; &quot;$line&quot; =~ ^[a-zA-Z] ]]; then in_rules=0; fi
+
+        if [[ $in_rules -eq 1 ]]; then
+                # 清除可能存在的双引号或单引号 (比如 - &quot;RULE-SET,Github,bemly&quot;)
+                clean_line=&quot;${line//\&quot;/}&quot;
+                clean_line=&quot;${clean_line//\&apos;/}&quot;
+
+                # 匹配 RULE-SET 映射 (格式: - RULE-SET,ProviderName,TargetGroup)
+                if [[ &quot;$clean_line&quot; =~ ^[[:space:]]*-[[:space:]]*RULE-SET,([^,]+),([^,]+) ]]; then
+                        provider_name=&quot;${BASH_REMATCH[1]}&quot;
+                        target=&quot;${BASH_REMATCH[2]}&quot;
+
+                        # 清理可能带有的 no-resolve 或注释
+                        target=&quot;${target%%,*}&quot;
+                        target=&quot;${target%%#*}&quot;
+
+                        # 去除首尾空格
+                        target=$(echo &quot;$target&quot; | xargs)
+                        provider_name=$(echo &quot;$provider_name&quot; | xargs)
+
+                        targets[&quot;$provider_name&quot;]=&quot;$target&quot;
+                fi
+        fi
+done &amp;lt;&quot;$INPUT_FILE&quot;
+
+# ==========================================
+# 第三阶段：组装并生成 CSV 文件
+# ==========================================
+# 第一行写入带 # 的表头，方便人类阅读，同时也让 VPS 脚本安全跳过
+echo &quot;#Name,TargetGroup,Behavior,LocalPath,URL&quot; &amp;gt;&quot;$OUTPUT_FILE&quot;
+
+for name in &quot;${!urls[@]}&quot;; do
+        target=&quot;${targets[$name]}&quot;
+
+        # 防止误提取你已经写好的 86 系列
+        if [[ &quot;$name&quot; == 86* ]]; then continue; fi
+
+        if [[ -n &quot;$target&quot; ]]; then
+                echo &quot;$name,$target,${behaviors[$name]},${paths[$name]},${urls[$name]}&quot; &amp;gt;&amp;gt;&quot;$OUTPUT_FILE&quot;
+                echo &quot;  -&amp;gt; 已记录: $name =&amp;gt; 将路由至 $target&quot;
+        else
+                echo &quot;  ⚠️ 警告: $name 未在 rules 路由表中使用，已跳过。&quot;
+        fi
+done
+
+echo &quot;----------------------------------------&quot;
+echo &quot;🎉 收集表生成完毕！请检查 $OUTPUT_FILE 文件。&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2&gt;🧠 第三阶段：全云端规则编译中心（核心！）&lt;/h2&gt;
+&lt;p&gt;这是整个架构的灵魂。我们将所有流量归类为 7 个终点（如 &lt;code&gt;Japan&lt;/code&gt;, &lt;code&gt;HK&lt;/code&gt;, &lt;code&gt;DIRECT&lt;/code&gt;, &lt;code&gt;REJECT&lt;/code&gt; 等），并为它们分别创建规则骨架。&lt;/p&gt;
+&lt;h3&gt;1. 私人规则骨架 (&lt;code&gt;86XXRules.yaml&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;在 &lt;code&gt;/opt/flowcollect/web/RuleSet/&lt;/code&gt; 下创建 7 个文件（例如 &lt;code&gt;86JPRules.yaml&lt;/code&gt;）。它们必须包含极其严格的 &lt;code&gt;[MANUAL_START]&lt;/code&gt; 和 &lt;code&gt;[MANUAL_END]&lt;/code&gt; 锚点。在上一节中，我们已经生成了这部分内容，你需要做的就是将其放置在对应目录。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;86JPRules.yaml&lt;/code&gt; 示例：&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;payload:
+  # ==========================================
+  # [MANUAL_START] Private
+  # ==========================================
+  - DOMAIN-KEYWORD,grok
+  - DOMAIN-KEYWORD,nhentai
+  # ==========================================
+  # [MANUAL_END] Private
+  # ==========================================
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;2. 开源规则清单 (&lt;code&gt;86_rule_set_collect.csv&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;在 &lt;code&gt;/opt/flowcollect/web/&lt;/code&gt; 下创建 &lt;code&gt;86_rule_set_collect.csv&lt;/code&gt;，作为你的“规则数据库”。格式为：&lt;code&gt;名称,目标策略组,原始格式,占位,云端链接&lt;/code&gt;。在上一节中，我们已经生成了这部分内容，你需要做的就是将其放置在对应目录。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#Name,TargetGroup,Behavior,LocalPath,URL
+Apple,DIRECT,classical,,https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Apple/Apple.yaml
+Google,Japan,domain,,https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt
+Steam,Switch,classical,,https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Steam/Steam.yaml
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;3. 极速编译脚本 (&lt;code&gt;update_rules.sh&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;摒弃效率低下的 Bash 循环，采用底层 AWK/SED 流处理，&lt;strong&gt;1秒内即可清洗并重组几十万条规则&lt;/strong&gt;，自动将 &lt;code&gt;domain&lt;/code&gt; 格式转换为统一的 &lt;code&gt;classical&lt;/code&gt; 格式。&lt;/p&gt;
+&lt;p&gt;新建 &lt;code&gt;/opt/flowcollect/web/update_rules.sh&lt;/code&gt;：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+
+WEB_DIR=&quot;/opt/flowcollect/web&quot;
+RULE_DIR=&quot;$WEB_DIR/RuleSet&quot;
+CSV_FILE=&quot;$WEB_DIR/86_rule_set_collect.csv&quot;
+
+if [ ! -f &quot;$CSV_FILE&quot; ]; then
+    echo &quot;[Error] 找不到规则收集表: $CSV_FILE&quot;
+    exit 1
+fi
+
+echo &quot;⏳ 开始编译并更新全量规则集...&quot;
+
+# 1. 初始化：清理所有规则集 [MANUAL_END] 之后的内容，防止重复追加
+for file in &quot;$RULE_DIR&quot;/86*.yaml; do
+    if [ -f &quot;$file&quot; ]; then
+        # sed 命令：找到 [MANUAL_END] Private 这一行，并在这行退出匹配，删除这行之后的所有内容
+        sed -i &apos;/\[MANUAL_END\] Private/q&apos; &quot;$file&quot;
+        echo &quot;&quot; &amp;gt;&amp;gt; &quot;$file&quot; # 补充一个空行
+    fi
+done
+
+# 辅助函数：根据目标策略组返回对应的文件名
+get_target_file() {
+    case &quot;$1&quot; in
+        Japan)   echo &quot;86JPRules.yaml&quot; ;;
+        HK)      echo &quot;86HKRules.yaml&quot; ;;
+        US)      echo &quot;86USRules.yaml&quot; ;;
+        bemly)   echo &quot;86BemlyRules.yaml&quot; ;;
+        Switch)  echo &quot;86SwitchRules.yaml&quot; ;;
+        DIRECT)  echo &quot;86DirectRules.yaml&quot; ;;
+        REJECT)  echo &quot;86RejectRules.yaml&quot; ;;
+        *)       echo &quot;&quot; ;;
+    esac
+}
+
+# 2. 读取 CSV，下载并处理云端规则
+# 使用逗号作为分隔符
+while IFS=, read -r name target behavior local_path url || [ -n &quot;$name&quot; ]; do
+    # 忽略空行和注释行
+    name=$(echo &quot;$name&quot; | xargs)
+    if [[ -z &quot;$name&quot; || &quot;$name&quot; == \#* ]]; then continue; fi
+
+    target=$(echo &quot;$target&quot; | xargs)
+    behavior=$(echo &quot;$behavior&quot; | xargs)
+    url=$(echo &quot;$url&quot; | tr -d &apos;\r&apos; | xargs) # 去除可能带来的 Windows 回车符
+
+    target_file=&quot;$RULE_DIR/$(get_target_file &quot;$target&quot;)&quot;
+
+    if [ ! -f &quot;$target_file&quot; ]; then
+        echo &quot;[Warn] 找不到策略组 $target 对应的文件，跳过 $name&quot;
+        continue
+    fi
+
+    echo &quot;-&amp;gt; 正在拉取并编译: $name (-&amp;gt; $target)&quot;
+
+    # 写入模块头部注释
+    echo &quot;  # === [AUTO: $name] ===&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+
+    # 下载到临时文件
+    curl -sS -L &quot;$url&quot; -o &quot;$WEB_DIR/raw.tmp&quot;
+
+    # 根据行为(behavior)使用 AWK 极速清洗并追加到目标文件
+    if [[ &quot;$behavior&quot; == &quot;domain&quot; ]]; then
+        awk &apos;
+        /^#/ || /^payload:/ || /^[[:space:]]*$/ {next}
+        {
+           sub(/^[[:space:]]*-[[:space:]]*/, &quot;&quot;);
+           gsub(/[&apos;\&apos;&apos;\&quot;]/, &quot;&quot;);
+           if ($0 ~ /^\+\./) { print &quot;  - DOMAIN-SUFFIX,&quot; substr($0, 3) }
+           else if ($0 ~ /^\+/) { print &quot;  - DOMAIN-SUFFIX,&quot; substr($0, 2) }
+           else if ($0 ~ /^full:/) { print &quot;  - DOMAIN,&quot; substr($0, 6) }
+           else if ($0 ~ /^domain:/) { print &quot;  - DOMAIN-SUFFIX,&quot; substr($0, 8) }
+           else { print &quot;  - DOMAIN-SUFFIX,&quot; $0 }
+        }&apos; &quot;$WEB_DIR/raw.tmp&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+    else
+        awk &apos;
+        BEGIN { in_payload=0 }
+        /^payload:/ { in_payload=1; next }
+        in_payload &amp;amp;&amp;amp; /^[[:space:]]*-[[:space:]]*/ { print $0 }
+        &apos; &quot;$WEB_DIR/raw.tmp&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+    fi
+
+    echo &quot;  # =====================&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+    echo &quot;&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+
+done &amp;lt; &quot;$CSV_FILE&quot;
+
+# 清理临时文件
+rm -f &quot;$WEB_DIR/raw.tmp&quot;
+echo &quot;[Success] 所有规则集编译完成！你的客户端现在可以拉取到满血版本了。&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;赋予权限：&lt;code&gt;chmod +x /opt/flowcollect/update_rules.sh&lt;/code&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;🗺️ 第四阶段：精简版主配置文件&lt;/h2&gt;
+&lt;p&gt;将下面这份极简的主配置（&lt;code&gt;power_by_0xav10086&lt;/code&gt;）上传到 VPS。它只做两件事：拉取节点、拉取 7 个已编译好的规则库。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# ... (基础端口配置、TUN 设置、DNS 设置保持原样) ...
+proxy-providers:
+  Global-ISP1:
+    type: http
+    url: &quot;https://dash.0xav10086.space/shanhuyun_node.yaml&quot;
+    interval: 86400
+    path: &quot;./Proxy-Providers/shanhuyun_node.yaml&quot;
+    health-check:
+      enable: true
+      interval: 600
+      url: https://cp.cloudflare.com/generate_204
+  Global-ISP2:
+    type: http
+    url: &quot;https://dash.0xav10086.space/bemly_node.yaml&quot;
+    interval: 86400
+    path: &quot;./Proxy-Providers/bemly.yaml&quot;
+    health-check:
+      enable: true
+      interval: 600
+      url: https://cp.cloudflare.com/generate_204
+  Global-ISP3:
+    type: http
+    url: &quot;https://dash.0xav10086.space/cf_node.yaml&quot;
+    interval: 86400
+    path: &quot;./Proxy-Providers/cf_0xav10086.yaml&quot;
+    health-check:
+      enable: true
+      interval: 600
+      url: https://cp.cloudflare.com/generate_204
+
+rules:
+  - DOMAIN-SUFFIX,0xav10086.space,DIRECT,no-resolve
+
+  - RULE-SET,86RejectRules,REJECT
+
+  - RULE-SET,86DirectRules,DIRECT
+
+  - RULE-SET,86JPRules,Japan
+  - RULE-SET,86HKRules,HK
+  - RULE-SET,86USRules,US
+  - RULE-SET,86BemlyRules,bemly
+  - RULE-SET,86SwitchRules,Switch
+
+  - GEOIP,LAN,DIRECT
+  - GEOIP,CN,DIRECT
+  - NETWORK,udp,DIRECT
+  - MATCH,DIRECT
+
+rule-providers:
+  86DirectRules:
+    type: http
+    behavior: classical
+    url: &quot;https://dash.0xav10086.space/RuleSet/86DirectRules.yaml&quot;
+    path: ./RuleSet/86DirectRules.yaml
+    interval: 86400
+    
+  86RejectRules:
+    type: http
+    behavior: classical
+    url: &quot;https://dash.0xav10086.space/RuleSet/86RejectRules.yaml&quot;
+    path: ./RuleSet/86RejectRules.yaml
+    interval: 86400
+    
+  86SwitchRules:
+    type: http
+    behavior: classical
+    url: &quot;https://dash.0xav10086.space/RuleSet/86SwitchRules.yaml&quot;
+    path: ./RuleSet/86SwitchRules.yaml
+    interval: 86400
+    
+  86JPRules:
+    type: http
+    behavior: classical
+    url: &quot;https://dash.0xav10086.space/RuleSet/86JPRules.yaml&quot;
+    path: ./RuleSet/86JPRules.yaml
+    interval: 86400
+    
+  86HKRules:
+    type: http
+    behavior: classical
+    url: &quot;https://dash.0xav10086.space/RuleSet/86HKRules.yaml&quot;
+    path: ./RuleSet/86HKRules.yaml
+    interval: 86400
+    
+  86USRules:
+    type: http
+    behavior: classical
+    url: &quot;https://dash.0xav10086.space/RuleSet/86USRules.yaml&quot;
+    path: ./RuleSet/86USRules.yaml
+    interval: 86400
+    
+  86BemlyRules:
+    type: http
+    behavior: classical
+    url: &quot;https://dash.0xav10086.space/RuleSet/86BemlyRules.yaml&quot;
+    path: ./RuleSet/86BemlyRules.yaml
+    interval: 86400
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;h2&gt;🗓️ 极客日常维护指南&lt;/h2&gt;
+&lt;p&gt;至此，你的基础设施已全部搭建完毕。日后的维护工作将变得前所未有的简单：&lt;/p&gt;
+&lt;h3&gt;1. 新设备接入&lt;/h3&gt;
+&lt;p&gt;在任何一台安装了 Clash Verge Rev (PC) 或 Box for KernelSU (Android) 的设备上，新建一个 URL 订阅：&lt;code&gt;https://dash.0xav10086.space/power_by_0xav10086&lt;/code&gt;。配置会自动拉取、级联，无需任何手动干预。&lt;/p&gt;
+&lt;h3&gt;2. 添加私人网站规则&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;操作：通过 SSH 或 WinSCP 打开 VPS 上的 &lt;code&gt;/opt/flowcollect/web/RuleSet/86XXRules.yaml&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;动作：在 &lt;code&gt;[MANUAL_START]&lt;/code&gt; 和 &lt;code&gt;[MANUAL_END]&lt;/code&gt; 之间添加你的域名。保存退出。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果：24 小时内，你的所有设备会自动生效（着急用可直接在客户端点一下“更新”）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3. 增加新的云端去广告/分流规则库&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;操作：打开 VPS 上的 &lt;code&gt;86_rule_set_collect.csv&lt;/code&gt;，按格式新增一行并分配好策略组。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;动作：运行 &lt;code&gt;update_rules.sh&lt;/code&gt; 进行秒级重编译。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;4. 彻底的自动化（Cron Job）&lt;/h3&gt;
+&lt;p&gt;让 VPS 成为全自动管家。创建以下脚本。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/bin/bash
+
+# ==========================================
+# Global Configuration
+# ==========================================
+WEB_DIR=&quot;/opt/flowcollect/web&quot;
+RULE_DIR=&quot;$WEB_DIR/RuleSet&quot;
+CSV_FILE=&quot;$WEB_DIR/86_rule_set_collect.csv&quot;
+LOG_FILE=&quot;/opt/flowcollect/auto_update.log&quot;
+
+# Redirect all stdout and stderr to the log file and also print to terminal
+exec &amp;gt; &amp;gt;(tee -a &quot;$LOG_FILE&quot;) 2&amp;gt;&amp;amp;1
+
+echo &quot;===================================================&quot;
+echo &quot;🚀 [$(date &apos;+%Y-%m-%d %H:%M:%S&apos;)] Auto-Update Task Started&quot;
+echo &quot;===================================================&quot;
+
+# ==========================================
+# Phase 1: Update Regular Airport Subscriptions
+# ==========================================
+# Define an associative array (dictionary) for standard airports.
+# Format: [&quot;filename&quot;]=&quot;subscription_url&quot;
+declare -A AIRPORT_URLS
+AIRPORT_URLS=(
+    [&quot;bemly_node.yaml&quot;]=&quot;&quot;
+    [&quot;cf_node.yaml&quot;]=&quot;&quot;
+)
+
+echo &quot;--&amp;gt; Phase 1: Updating standard subscriptions...&quot;
+
+# Iterate over the dictionary keys (filenames)
+for file_name in &quot;${!AIRPORT_URLS[@]}&quot;; do
+    url=&quot;${AIRPORT_URLS[$file_name]}&quot;
+    target_file=&quot;$WEB_DIR/$file_name&quot;
+    
+    echo &quot;⏳ Fetching nodes for [$file_name]...&quot;
+    
+    # Download to a temporary file first, capture HTTP status code
+    HTTP_CODE=$(curl -sS -L -w &quot;%{http_code}&quot; -A &quot;clash.meta&quot; &quot;$url&quot; -o &quot;${target_file}.tmp&quot;)
+    
+    # Check if download was successful (HTTP 200)
+    if [ &quot;$HTTP_CODE&quot; = &quot;200&quot; ]; then
+        mv &quot;${target_file}.tmp&quot; &quot;$target_file&quot;
+        echo &quot;✅ Successfully updated [$file_name].&quot;
+    else
+        # Remove the corrupted temp file if download fails
+        rm -f &quot;${target_file}.tmp&quot;
+        echo &quot;❌ Failed to update [$file_name] (HTTP: $HTTP_CODE). Retaining old file.&quot;
+    fi
+done
+
+# ==========================================
+# Phase 2: Handle &quot;Burn-After-Reading&quot; Airport
+# ==========================================
+echo -e &quot;\n--&amp;gt; Phase 2: Handling burn-after-reading subscriptions...&quot;
+
+# &apos;shanhuyun&apos; relies on a burn-after-reading mechanism.
+# It is intentionally excluded from the dictionary above to prevent 403 errors.
+echo &quot;⚠️  Skipping &apos;shanhuyun&apos; (Burn-After-Reading mechanism).&quot;
+echo &quot;   Please update it manually using the dedicated one-time link script when needed.&quot;
+
+# ==========================================
+# Phase 3: Compile and Update Rule Sets
+# ==========================================
+echo -e &quot;\n--&amp;gt; Phase 3: Compiling cloud rule sets...&quot;
+
+if [ ! -f &quot;$CSV_FILE&quot; ]; then
+    echo &quot;❌ [Error] Rule collection CSV not found: $CSV_FILE&quot;
+    exit 1
+fi
+
+# Initialize: Clear content after [MANUAL_END] Private to prevent duplicate appends
+for file in &quot;$RULE_DIR&quot;/86*.yaml; do
+    if [ -f &quot;$file&quot; ]; then
+        sed -i &apos;/\[MANUAL_END\] Private/q&apos; &quot;$file&quot;
+        echo &quot;&quot; &amp;gt;&amp;gt; &quot;$file&quot; # Add an empty line for spacing
+    fi
+done
+
+# Helper function: Map target policy group to filename
+get_target_file() {
+    case &quot;$1&quot; in
+        Japan)   echo &quot;86JPRules.yaml&quot; ;;
+        HK)      echo &quot;86HKRules.yaml&quot; ;;
+        US)      echo &quot;86USRules.yaml&quot; ;;
+        bemly)   echo &quot;86BemlyRules.yaml&quot; ;;
+        Switch)  echo &quot;86SwitchRules.yaml&quot; ;;
+        DIRECT)  echo &quot;86DirectRules.yaml&quot; ;;
+        REJECT)  echo &quot;86RejectRules.yaml&quot; ;;
+        *)       echo &quot;&quot; ;;
+    esac
+}
+
+# Read CSV, download and process cloud rules
+while IFS=, read -r name target behavior local_path url || [ -n &quot;$name&quot; ]; do
+    name=$(echo &quot;$name&quot; | xargs)
+    # Skip empty lines and commented lines
+    if [[ -z &quot;$name&quot; || &quot;$name&quot; == \#* ]]; then continue; fi
+
+    target=$(echo &quot;$target&quot; | xargs)
+    behavior=$(echo &quot;$behavior&quot; | xargs)
+    url=$(echo &quot;$url&quot; | tr -d &apos;\r&apos; | xargs)
+
+    target_file=&quot;$RULE_DIR/$(get_target_file &quot;$target&quot;)&quot;
+    
+    if [ ! -f &quot;$target_file&quot; ]; then
+        echo &quot;⚠️  [Warn] Target file for policy group $target not found, skipping $name&quot;
+        continue
+    fi
+
+    echo &quot;  -&amp;gt; Fetching and compiling: $name (-&amp;gt; $target)&quot;
+    
+    # Write module header comment
+    echo &quot;  # === [AUTO: $name] ===&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+
+    # Download to temp file
+    curl -sS -L &quot;$url&quot; -o &quot;$WEB_DIR/raw.tmp&quot;
+    
+    # Process and append to target file using AWK based on behavior mapping
+    if [[ &quot;$behavior&quot; == &quot;domain&quot; ]]; then
+        awk &apos;
+        /^#/ || /^payload:/ || /^[[:space:]]*$/ {next}
+        {
+           sub(/^[[:space:]]*-[[:space:]]*/, &quot;&quot;);
+           gsub(/[\047\042]/, &quot;&quot;);
+           if ($0 ~ /^\+\./) { print &quot;  - DOMAIN-SUFFIX,&quot; substr($0, 3) }
+           else if ($0 ~ /^\+/) { print &quot;  - DOMAIN-SUFFIX,&quot; substr($0, 2) }
+           else if ($0 ~ /^full:/) { print &quot;  - DOMAIN,&quot; substr($0, 6) }
+           else if ($0 ~ /^domain:/) { print &quot;  - DOMAIN-SUFFIX,&quot; substr($0, 8) }
+           else { print &quot;  - DOMAIN-SUFFIX,&quot; $0 }
+        }&apos; &quot;$WEB_DIR/raw.tmp&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+    else
+        awk &apos;
+        BEGIN { in_payload=0 }
+        /^payload:/ { in_payload=1; next }
+        in_payload &amp;amp;&amp;amp; /^[[:space:]]*-[[:space:]]*/ { print $0 }
+        &apos; &quot;$WEB_DIR/raw.tmp&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+    fi
+    
+    echo &quot;  # =====================&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+    echo &quot;&quot; &amp;gt;&amp;gt; &quot;$target_file&quot;
+
+done &amp;lt; &quot;$CSV_FILE&quot;
+
+# Cleanup temp file
+rm -f &quot;$WEB_DIR/raw.tmp&quot;
+echo &quot;✅ [Success] All rule sets successfully compiled!&quot;
+
+echo &quot;===================================================&quot;
+echo &quot;🎉 [$(date &apos;+%Y-%m-%d %H:%M:%S&apos;)] Auto-Update Task Finished&quot;
+echo &quot;===================================================&quot;
+echo &quot;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;以下是输出结果，赏心悦目啊：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;===================================================
+🚀 [2026-04-04 09:35:10] Auto-Update Task Started
+===================================================
+--&amp;gt; Phase 1: Updating standard subscriptions...
+⏳ Fetching nodes for [bemly_node.yaml]...
+✅ Successfully updated [bemly_node.yaml].
+⏳ Fetching nodes for [cf_node.yaml]...
+✅ Successfully updated [cf_node.yaml].
+
+--&amp;gt; Phase 2: Handling burn-after-reading subscriptions...
+⚠️  Skipping &apos;shanhuyun&apos; (Burn-After-Reading mechanism).
+   Please update it manually using the dedicated one-time link script when neede
+d.
+
+--&amp;gt; Phase 3: Compiling cloud rule sets...
+  -&amp;gt; Fetching and compiling: Global (-&amp;gt; Switch)
+  -&amp;gt; Fetching and compiling: Gemini (-&amp;gt; Japan)
+  -&amp;gt; Fetching and compiling: SteamCN (-&amp;gt; DIRECT)
+  -&amp;gt; Fetching and compiling: Telegram (-&amp;gt; HK)
+  -&amp;gt; Fetching and compiling: Steam (-&amp;gt; Switch)
+  -&amp;gt; Fetching and compiling: Notion (-&amp;gt; Switch)
+  -&amp;gt; Fetching and compiling: Microsoft (-&amp;gt; DIRECT)
+  -&amp;gt; Fetching and compiling: Spotify (-&amp;gt; DIRECT)
+  -&amp;gt; Fetching and compiling: Youtube (-&amp;gt; HK)
+  -&amp;gt; Fetching and compiling: Twitch (-&amp;gt; HK)
+  -&amp;gt; Fetching and compiling: OpenAI (-&amp;gt; Japan)
+  -&amp;gt; Fetching and compiling: Apple (-&amp;gt; DIRECT)
+  -&amp;gt; Fetching and compiling: Google (-&amp;gt; Japan)
+  -&amp;gt; Fetching and compiling: China (-&amp;gt; DIRECT)
+  -&amp;gt; Fetching and compiling: Github (-&amp;gt; bemly)
+✅ [Success] All rule sets successfully compiled!
+===================================================
+🎉 [2026-04-04 09:35:25] Auto-Update Task Finished
+===================================================
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;既然脚本已经能够完美运行，接下来我们就可以把它交给系统的定时任务（Cron）来全自动执行了。&lt;/p&gt;
+&lt;p&gt;以下是设置定时任务的完整步骤：&lt;/p&gt;
+&lt;h3&gt;1. 打开定时任务编辑器&lt;/h3&gt;
+&lt;p&gt;在终端中输入以下命令来编辑当前用户的定时任务列表：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;crontab -e
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;(注：如果你平时习惯用 Neovim，可以通过预设环境变量来强制 &lt;code&gt;crontab&lt;/code&gt; 使用它打开，例如 &lt;code&gt;EDITOR=nvim crontab -e&lt;/code&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;h3&gt;2. 添加定时任务规则&lt;/h3&gt;
+&lt;p&gt;进入编辑界面后，在文件的最末尾添加以下这行代码。这里我为你设定的是 &lt;strong&gt;每天凌晨 4:30&lt;/strong&gt; 执行一次（这个时间点通常网络比较闲置，且能避开大多数服务的整点备份高峰）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;30 4 * * * /opt/flowcollect/web/auto_update_node_and_rule.sh
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Cron 表达式解析：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;30&lt;/code&gt;：分钟 (第 30 分钟)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;4&lt;/code&gt;：小时 (凌晨 4 点)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;*&lt;/code&gt;：日期 (每天)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;*&lt;/code&gt;：月份 (每个月)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;*&lt;/code&gt;：星期 (星期一到星期日)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最后一段是你的脚本绝对路径。由于脚本内部已经写好了日志重定向（&lt;code&gt;exec &amp;gt; &amp;gt;(tee -a &quot;$LOG_FILE&quot;) 2&amp;gt;&amp;amp;1&lt;/code&gt;），所以这里不需要再写多余的 &lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt; 日志输出代码，非常整洁。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3. 保存并退出&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如果你的默认编辑器是 &lt;strong&gt;Vim/Neovim&lt;/strong&gt;：按 &lt;code&gt;Esc&lt;/code&gt;，输入 &lt;code&gt;:wq&lt;/code&gt; 并回车。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果你的默认编辑器是 &lt;strong&gt;Nano&lt;/strong&gt;：按 &lt;code&gt;Ctrl + O&lt;/code&gt; 保存，回车确认，然后按 &lt;code&gt;Ctrl + X&lt;/code&gt; 退出。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;系统会提示 &lt;code&gt;crontab: installing new crontab&lt;/code&gt;，这就说明任务添加成功了。&lt;/p&gt;
+&lt;h3&gt;4. 验证任务是否添加成功&lt;/h3&gt;
+&lt;p&gt;你可以通过以下命令查看当前已配置的定时任务列表：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;crontab -l
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;💡 附加提示 (排错备忘)&lt;/h3&gt;
+&lt;p&gt;既然你在用 Arch / Ubuntu 等 Linux 系统，确保系统的 Cron 服务正在运行。如果你发现到了时间没执行，可以检查一下 Cron 守护进程的状态：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Ubuntu/Debian 系统通常是 cron
+sudo systemctl status cron
+
+# Arch/CentOS 系统通常是 cronie 或 crond
+sudo systemctl status cronie
+# 如果没启动，记得 enable 并 start 它
+# sudo systemctl enable --now cronie
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;大功告成！现在你的节点和几十万条分流规则每天都会在云端自动且无声地更新了。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;享受这个亲手打造的、极致优雅且坚如磐石的网络环境吧！&lt;/strong&gt;&lt;/p&gt;
+</content:encoded></item><item><title>我的wezterm配置</title><link>https://0xav10086.space/posts/%E6%88%91%E7%9A%84wezterm%E9%85%8D%E7%BD%AE/</link><guid isPermaLink="true">https://0xav10086.space/posts/%E6%88%91%E7%9A%84wezterm%E9%85%8D%E7%BD%AE/</guid><description>这个教程将会教你如何让Windows的终端更好用。</description><pubDate>Wed, 25 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;我的 WezTerm 配置归档&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;本文档的内容与 [[Windows10中更好用的右键]]已相互关联&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;一、 核心概念：终端模拟器与 Shell 的关系&lt;/h2&gt;
+&lt;p&gt;要打造一个完美的命令行环境，首先要明确“壳”（终端）与“大脑”（Shell）的分工。&lt;/p&gt;
+&lt;h3&gt;1. 终端模拟器 (Terminal Emulator) —— 舞台与外壳&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;代表：&lt;/strong&gt; WezTerm, Windows Terminal, Alacritty。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;职责：&lt;/strong&gt; 纯粹的 UI 容器。它不负责执行任何系统命令，只负责&lt;strong&gt;接收键盘输入&lt;/strong&gt;、&lt;strong&gt;渲染字体（如 Nerd Fonts 图标）&lt;/strong&gt;、&lt;strong&gt;绘制颜色主题（如 Catppuccin）&lt;/strong&gt; 以及提供分屏、多标签页等界面交互功能。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. Shell (命令行解释器) —— 大脑与执行者&lt;/h3&gt;
+&lt;p&gt;它们运行在终端模拟器内部，负责解析输入的命令并向操作系统下达指令。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;CMD (Command Prompt)：&lt;/strong&gt; 微软的 DOS 时代遗留产物，语法古老，仅用于向下兼容老旧的 &lt;code&gt;.bat&lt;/code&gt; 批处理脚本，日常开发已极少作为主力。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;PowerShell 5 (Windows PowerShell)：&lt;/strong&gt; Windows 10/11 系统自带的默认版本（通常为蓝底白字）。基于较老的 .NET Framework，与 Windows 深度绑定，但官方已停止为其开发新功能。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;PowerShell 7 (pwsh / PowerShell Core)：&lt;/strong&gt; 微软开源的新世代跨平台 Shell。基于现代 .NET 开发，性能更强，语法更现代（支持三元运算符等），且跨平台一致。其执行文件名为 &lt;code&gt;pwsh.exe&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;二、 配置方式指南&lt;/h2&gt;
+&lt;p&gt;虽然它们配合工作，但配置文件是相互独立的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;WezTerm 的配置：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;位置：&lt;/strong&gt; 用户主目录下的 &lt;code&gt;.wezterm.lua&lt;/code&gt; (例如 &lt;code&gt;C:\Users\用户名\.wezterm.lua&lt;/code&gt;)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;特点：&lt;/strong&gt; 使用 Lua 语言编写，保存文件后 WezTerm 会&lt;strong&gt;自动热重载&lt;/strong&gt;，立即生效。决定了字体、字号、颜色主题和窗口外观。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Shell (pwsh) 的配置：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;位置：&lt;/strong&gt; 通常位于 &lt;code&gt;~\Documents\PowerShell\Microsoft.PowerShell_profile.ps1&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;配置方法：&lt;/strong&gt; 在 pwsh 中直接输入 &lt;code&gt;nvim $PROFILE&lt;/code&gt; 即可编辑。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;特点：&lt;/strong&gt; 使用 PowerShell 语法编写，需要重新打开终端或运行 &lt;code&gt;. $PROFILE&lt;/code&gt; 才能生效。负责配置别名（Aliases）、启动 Oh My Posh 提示符渲染、运行 Fastfetch 等环境变量与启动项。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;CMD 的配置：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;通常通过修改注册表或快捷方式属性来进行极其有限的外观调整，在现代开发流中通常不进行深度配置。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;三、 我的最终选择与配置文件&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;我的组合方案：WezTerm + PowerShell 7 (pwsh)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这套组合将 WezTerm 强大的 GPU 渲染能力、丰富的自定义外观与 pwsh 现代化的跨平台脚本能力完美结合。搭配 JetBrains Mono 字体与 Catppuccin 莫兰迪色系，实现了高信噪比、护眼且极客的沉浸式体验。&lt;/p&gt;
+&lt;h3&gt;1. WezTerm 配置 (&lt;code&gt;~/.wezterm.lua&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;包含了字体连字、暗色主题以及无边框沉浸模式的设定。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;local wezterm = require(&quot;wezterm&quot;)
+local config = wezterm.config_builder()
+
+-- 1. 核心运行环境
+-- 设置默认启动 PowerShell 7
+config.default_prog = { &quot;pwsh.exe&quot;}
+
+-- 2. 字体与渲染
+-- 使用支持编程连字和内置图标的 JetBrains Mono
+config.font = wezterm.font(&quot;JetBrainsMono Nerd Font&quot;)
+config.font_size = 12.0
+
+-- 3. 颜色主题
+-- 采用柔和护眼的 Catppuccin Mocha 莫兰迪暗色系
+config.color_scheme = &quot;Catppuccin Mocha&quot;
+
+-- 4. 窗口外观 (无边框沉浸模式)
+-- 隐藏系统自带的标题栏，保留拖拽边缘调整大小的能力
+config.window_decorations = &quot;RESIZE&quot;
+-- 增加内边距，防止文字紧贴屏幕边缘
+config.window_padding = {
+  left = &apos;1cell&apos;,
+  right = &apos;1cell&apos;,
+  top = &apos;0.5cell&apos;,
+  bottom = &apos;0.5cell&apos;,
+}
+
+return config
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;2. PowerShell 配置 (&lt;code&gt;$PROFILE&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;统一了终端内部的提示符排版，并复刻了 Linux 风格的包管理习惯。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# ==========================================
+# 1. 别名与快捷命令
+# ==========================================
+function p { scoop @args }             # 简化包管理命令
+Set-Alias -Name vi -Value nvim         # 肌肉记忆适配
+Set-Alias -Name sudo -Value gsudo      # 权限提升
+
+# ==========================================
+# 2. 提示符美化 (Oh My Posh)
+# ==========================================
+# 使用与 WezTerm 颜色完美契合的 catppuccin_mocha 主题
+oh-my-posh init pwsh --config &quot;$env:POSH_THEMES_PATH\catppuccin_mocha.omp.json&quot; | Invoke-Expression
+
+# ==========================================
+# 3. 终端扩展模块
+# ==========================================
+# 为 ls/dir 命令添加彩色文件图标
+Import-Module Terminal-Icons
+
+# 每次打开终端时输出系统信息面板
+fastfetch
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;四、 WezTerm 进阶玩法探索 (备忘)&lt;/h2&gt;
+&lt;p&gt;除了外观调整和快捷键分屏外，WezTerm 还有许多强大的内置特性，日后可以逐步探索：&lt;/p&gt;
+&lt;h3&gt;1. Launch Menu (多环境快速启动菜单)&lt;/h3&gt;
+&lt;p&gt;如果系统中同时存在多种开发环境（如 pwsh、MSYS2、WSL、连接服务器的 SSH），可以在 Lua 中配置 &lt;code&gt;launch_menu&lt;/code&gt;。配置后，通过右上角的加号按钮或快捷键，可以弹出一个菜单，一键启动并进入纯净的特定环境，而无需在不同终端软件间来回切换。&lt;/p&gt;
+&lt;h3&gt;2. 自定义现代标签页栏 (Custom Tab Bar)&lt;/h3&gt;
+&lt;p&gt;WezTerm 允许通过 Lua 脚本彻底重绘顶部的标签页栏（Tab Bar）。你可以隐藏默认的复古标签，将其改为类似现代浏览器（如 Edge 或 Chrome）的圆角样式，或者在标签页的最右侧实时显示当前的系统时间、笔记本电量、甚至 CPU 占用率，打造一个全能的状态栏。&lt;/p&gt;
+</content:encoded></item><item><title>asyncio-异步编程</title><link>https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</link><guid isPermaLink="true">https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</guid><description>这个教程将会教你如何使用asyncio进行异步编程。</description><pubDate>Sat, 07 Feb 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;用asyncio进行异步编程&lt;/h1&gt;
 &lt;p&gt;本教程源于&lt;a href=&quot;https://www.bilibili.com/video/BV157mFYEEkH/?vd_source=3654085a5ac7355d466d8ad324a1973f&quot;&gt;【Py】asyncio：为异步编程而生 | Python 教程 | 并发编程 | 协程&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;本教程适用于Python&lt;/p&gt;
 &lt;h2&gt;基本概念&lt;/h2&gt;
@@ -831,7 +1911,7 @@ RDP_FLAGS=&quot;/cert:ignore /gfx:avc420 /network:auto /drive:home,/home/av10086
 &lt;h1&gt;参考资料&lt;/h1&gt;
 &lt;p&gt;&lt;a href=&quot;https://www.bilibili.com/video/BV1f1421Q7Li/&quot;&gt;【Office】Office Tool Plus安装激活Office保姆级使用教程&lt;/a&gt;
 &lt;a href=&quot;https://www.microsoft.com/zh-cn/software-download/windows10&quot;&gt;Windows 10 下载页&lt;/a&gt;&lt;/p&gt;
-</content:encoded></item><item><title>how-to-configuration-HTTPS</title><link>https://0xav10086.space/posts/how-to-configuration-https/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-configuration-https/</guid><pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;第一步：获取 Cloudflare 名称服务器&lt;/h2&gt;
+</content:encoded></item><item><title>how-to-configuration-HTTPS</title><link>https://0xav10086.space/posts/how-to-configuration-https/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-configuration-https/</guid><description>这个教程将会教你如何让服务器支持HTTPS。</description><pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;第一步：获取 Cloudflare 名称服务器&lt;/h2&gt;
 &lt;p&gt;在操作阿里云之前，请确保你已经：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -1003,7 +2083,7 @@ apt install certbot python3-certbot-nginx -y
 &lt;p&gt;&lt;strong&gt;权限&lt;/strong&gt;：如果访问报 403 错误，执行 &lt;code&gt;chmod -R 755 /var/www/blog&lt;/code&gt; 确保 Nginx 有权读取文件。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-</content:encoded></item><item><title>how-to-use-github-actions</title><link>https://0xav10086.space/posts/how-to-use-github-actions/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-use-github-actions/</guid><pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;1. GitHub 网页端设置：开启与保护&lt;/h2&gt;
+</content:encoded></item><item><title>how-to-use-github-actions</title><link>https://0xav10086.space/posts/how-to-use-github-actions/</link><guid isPermaLink="true">https://0xav10086.space/posts/how-to-use-github-actions/</guid><description>这个教程将会教你如何使用项目的action功能。</description><pubDate>Fri, 02 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;1. GitHub 网页端设置：开启与保护&lt;/h2&gt;
 &lt;p&gt;由于我的仓库是 &lt;strong&gt;Fork&lt;/strong&gt; 来的，GitHub 为了安全会默认锁定自动化脚本。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
