@@ -1078,6 +1078,140 @@ fastfetch
 &lt;p&gt;如果系统中同时存在多种开发环境（如 pwsh、MSYS2、WSL、连接服务器的 SSH），可以在 Lua 中配置 &lt;code&gt;launch_menu&lt;/code&gt;。配置后，通过右上角的加号按钮或快捷键，可以弹出一个菜单，一键启动并进入纯净的特定环境，而无需在不同终端软件间来回切换。&lt;/p&gt;
 &lt;h3&gt;2. 自定义现代标签页栏 (Custom Tab Bar)&lt;/h3&gt;
 &lt;p&gt;WezTerm 允许通过 Lua 脚本彻底重绘顶部的标签页栏（Tab Bar）。你可以隐藏默认的复古标签，将其改为类似现代浏览器（如 Edge 或 Chrome）的圆角样式，或者在标签页的最右侧实时显示当前的系统时间、笔记本电量、甚至 CPU 占用率，打造一个全能的状态栏。&lt;/p&gt;
+</content:encoded></item><item><title>Windows10中更好用的右键</title><link>https://0xav10086.space/posts/windows10%E4%B8%AD%E6%9B%B4%E5%A5%BD%E7%94%A8%E7%9A%84%E5%8F%B3%E9%94%AE/</link><guid isPermaLink="true">https://0xav10086.space/posts/windows10%E4%B8%AD%E6%9B%B4%E5%A5%BD%E7%94%A8%E7%9A%84%E5%8F%B3%E9%94%AE/</guid><description>这个教程将会教你如何在 Windows10 中拥有更多功能的右键。</description><pubDate>Mon, 09 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;Windows 10 右键菜单终极优化与现代化指南&lt;/h1&gt;
+&lt;p&gt;本指南旨在从一个纯净的 Windows 10 系统开始，通过包管理器（Scoop）和强大的右键定制工具（Nilesoft Shell），打造一个极速、无广告、纯粹且高度定制化的右键菜单。不仅去除了原生菜单的臃肿，还完美集成了开发者常用的 Windows Terminal 和 7-Zip。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;本文档关于终端的后续配置可见[[我的wezterm配置]]&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;第一阶段：基础环境搭建 (安装 Scoop)&lt;/h2&gt;
+&lt;p&gt;对于刚装好 Windows 10 的系统，我们首先需要引入现代化的命令行包管理器 &lt;strong&gt;Scoop&lt;/strong&gt;，这将极大地简化后续软件的安装和路径配置。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;开启脚本执行权限&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;右键点击开始菜单，选择“Windows PowerShell (管理员)”，执行以下命令：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;输入 &lt;code&gt;Y&lt;/code&gt; 确认。&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;安装 Scoop&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;在 PowerShell 中运行官方安装脚本：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;添加扩展软件仓库 (Buckets)&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;Nilesoft Shell 等工具存在于扩展库中，我们需要添加 &lt;code&gt;extras&lt;/code&gt; 库：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;scoop bucket add extras
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;第二阶段：核心软件安装&lt;/h2&gt;
+&lt;p&gt;利用 Scoop，我们可以一行命令把需要的终端、解压软件和右键菜单核心程序全部装好。这些软件会统一安装在 &lt;code&gt;%USERPROFILE%\scoop\apps\&lt;/code&gt; 目录下，方便后续在右键菜单中绝对定位。&lt;/p&gt;
+&lt;p&gt;打开 PowerShell，执行：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;scoop install 7zip windows-terminal pwsh nilesoft-shell
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;em&gt;(注：这里安装了 7-Zip、Windows Terminal、PowerShell 7 以及核心的 Nilesoft Shell)&lt;/em&gt;&lt;/p&gt;
+&lt;h2&gt;第三阶段：注入核心配置文件&lt;/h2&gt;
+&lt;p&gt;软件安装完毕后，我们需要修改 Nilesoft Shell 的配置文件。&lt;/p&gt;
+&lt;p&gt;配置文件的根目录位于：&lt;code&gt;~\scoop\apps\nilesoft-shell\current\&lt;/code&gt;。你需要修改或替换以下三个核心文件。&lt;/p&gt;
+&lt;h3&gt;1. 主配置文件：&lt;code&gt;shell.nss&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;这个文件是右键菜单的“总控中心”。我们在这里引入基础设置、移除重复项，并编写了完美的 7-Zip 右键解压缩逻辑。&lt;/p&gt;
+&lt;p&gt;使用文本编辑器打开 &lt;code&gt;~\scoop\apps\nilesoft-shell\current\shell.nss&lt;/code&gt;，替换为以下内容：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;settings
+{
+	priority=1
+	exclude.where = !process.is_explorer
+	showdelay = 200
+	// Options to allow modification of system items
+	modify.remove.duplicate=1
+	tip.enabled=true
+}
+
+import &apos;imports/theme.nss&apos;
+import &apos;imports/images.nss&apos;
+
+import &apos;imports/modify.nss&apos;
+
+menu(mode=&quot;multiple&quot; title=&quot;Pin/Unpin&quot; image=icon.pin)
+{
+}
+
+menu(mode=&quot;multiple&quot; title=title.more_options image=icon.more_options)
+{
+}
+
+import &apos;imports/terminal.nss&apos;
+import &apos;imports/file-manage.nss&apos;
+import &apos;imports/develop.nss&apos;
+import &apos;imports/goto.nss&apos;
+import &apos;imports/taskbar.nss&apos;
+
+menu(where=sel.count title=&apos;7-Zip&apos; image=&apos;%USERPROFILE%\scoop\apps\7zip\current\7zFM.exe&apos;)
+{
+    item(title=&apos;Open 7-Zip&apos; cmd=&apos;%USERPROFILE%\scoop\apps\7zip\current\7zFM.exe&apos; args=&apos;@sel.path&apos;)
+
+    sep
+
+    item(title=&apos;Add to archive...&apos; cmd=&apos;%USERPROFILE%\scoop\apps\7zip\current\7zG.exe&apos; args=&apos;a&apos;)
+
+    item(title=&apos;Compress to 7z&apos; cmd=&apos;%USERPROFILE%\scoop\apps\7zip\current\7z.exe&apos; args=&apos;a &quot;@sel.name&quot;.7z &quot;@sel.path&quot;&apos;)
+
+    item(title=&apos;Compress to zip&apos; cmd=&apos;%USERPROFILE%\scoop\apps\7zip\current\7z.exe&apos; args=&apos;a -tzip &quot;@sel.name&quot;.zip &quot;@sel.path&quot;&apos;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;(说明：底部自定义的 7-Zip 菜单精准指向了 Scoop 的安装路径，彻底替代了原生右键中杂乱的解压选项 。)&lt;/p&gt;
+&lt;h3&gt;2. 视觉主题配置：&lt;code&gt;theme.nss&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;为了符合 Windows 10 经典的直角与不透明审美，我们需要关闭默认的毛玻璃效果。&lt;/p&gt;
+&lt;p&gt;打开 &lt;code&gt;~\scoop\apps\nilesoft-shell\current\imports\theme.nss&lt;/code&gt;，替换为以下内容：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;theme
+{
+	name=&quot;classic&quot;
+	dark=auto
+	background
+	{
+		color=auto
+		opacity=100
+		effect=0
+	}
+	image.align=2
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;(说明：&lt;code&gt;opacity=100&lt;/code&gt; 和 &lt;code&gt;effect=0&lt;/code&gt; 禁用了透明与模糊特效，确保菜单呈现纯粹的 Win10 经典质感 。)&lt;/p&gt;
+&lt;h3&gt;3. 终端调用配置：&lt;code&gt;terminal.nss&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;原生菜单的“在此处打开 PowerShell”往往存在权限或路径解析问题。我们对其进行了重构，并加入了 Scoop 版 Windows Terminal 的绝对路径支持。&lt;/p&gt;
+&lt;p&gt;打开 &lt;code&gt;~\scoop\apps\nilesoft-shell\current\imports\terminal.nss&lt;/code&gt;，替换为以下内容：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;menu(type=&apos;*&apos; where=(sel.count or wnd.is_taskbar or wnd.is_edit) title=title.terminal sep=&apos;top&apos; image=icon.run_with_powershell)
+{
+        $tip_run_admin=[&quot;\xE1A7 Press SHIFT key to run &quot; + this.title + &quot; as administrator&quot;, tip.warning, 1.0]
+        $has_admin=key.shift() or key.rbutton()
+
+        item(title=title.command_prompt tip=tip_run_admin admin=has_admin image cmd=&apos;cmd.exe&apos; args=&apos;/K TITLE Command Prompt &amp;amp;ver&amp;amp; PUSHD &quot;@sel.dir&quot;&apos;)
+        item(title=title.windows_powershell admin=has_admin tip=tip_run_admin image cmd=&apos;powershell.exe&apos; args=&apos;-noexit -command Set-Location -Path &quot;@sel.dir\.&quot;&apos;)
+    // item(where=package.exists(&quot;WindowsTerminal&quot;) title=title.Windows_Terminal tip=tip_run_admin admin=has_admin image=&apos;@package.path(&quot;WindowsTerminal&quot;)\WindowsTerminal.exe&apos; cmd=&apos;wt.exe&apos; arg=&apos;-d &quot;@sel.path\.&quot;&apos;)
+        item(title=&apos;Windows Terminal&apos; tip=tip_run_admin admin=has_admin image=&apos;%USERPROFILE%\scoop\apps\windows-terminal\current\wt.exe&apos; cmd=&apos;%USERPROFILE%\scoop\apps\windows-terminal\current\wt.exe&apos; args=&apos;-d &quot;@sel.dir\.&quot;&apos;)
+    item(title=&apos;WezTerm&apos; tip=tip_run_admin admin=has_admin image=&apos;%USERPROFILE%\scoop\apps\wezterm\current\wezterm-gui.exe&apos; cmd=&apos;%USERPROFILE%\scoop\apps\wezterm\current\wezterm-gui.exe&apos; args=&apos;start --cwd &quot;@sel.dir\.&quot;&apos;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;(说明：这里注释掉了原版通过 UWP 包检测的逻辑，改为直接硬编码指向 Scoop 安装的 &lt;code&gt;wt.exe&lt;/code&gt; 路径，保证了百分百的触发成功率 。)&lt;/p&gt;
+&lt;h2&gt;第四阶段：注册与生效&lt;/h2&gt;
+&lt;p&gt;配置文件修改完毕后，最后一步是将 Nilesoft Shell 注册到系统中。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;打开 PowerShell，进入工具目录：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cd ~/scoop/apps/nilesoft-shell/current
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;运行注册安装程序（弹出的 UAC 提示请点击“是”）：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.\shell.exe -install
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在弹出的提示框中确认重启资源管理器 (Restart Windows Explorer)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;至此，你的 Windows 10 右键菜单已成功脱胎换骨！&lt;/strong&gt; 随便在一个文件夹空白处点击右键，享受干净、快速且完全属于你的定制菜单吧。&lt;/p&gt;
 </content:encoded></item><item><title>asyncio-异步编程</title><link>https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</link><guid isPermaLink="true">https://0xav10086.space/posts/asyncio-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</guid><description>这个教程将会教你如何使用asyncio进行异步编程。</description><pubDate>Sat, 07 Feb 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;用asyncio进行异步编程&lt;/h1&gt;
 &lt;p&gt;本教程源于&lt;a href=&quot;https://www.bilibili.com/video/BV157mFYEEkH/?vd_source=3654085a5ac7355d466d8ad324a1973f&quot;&gt;【Py】asyncio：为异步编程而生 | Python 教程 | 并发编程 | 协程&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;本教程适用于Python&lt;/p&gt;
