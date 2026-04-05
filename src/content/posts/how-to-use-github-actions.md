@@ -8,6 +8,7 @@ tags:
   - tutorial
   - archive
 summary: ""
+description: 这个教程将会教你如何使用项目的action功能。
 ---
 ## 1. GitHub 网页端设置：开启与保护
 

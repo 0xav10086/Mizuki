@@ -7,15 +7,16 @@ import sharp from "sharp";
 // --- 环境检测 ---
 const platform = os.platform();
 let SOURCE_DIR = "";
-let TARGET_DIR = "/home/av10086/code/mizuki/src/content/posts";
+let TARGET_DIR = "./src/content/posts";
 
 if (platform === "linux") {
 	SOURCE_DIR =
 		"/home/av10086/Documents/SynologyDrive/personal_knowledge_base/WriterSide/Writerside/topics";
 	console.log("当前的环境为 linux ");
 } else if (platform === "win32") {
-	console.error("❌ 该系统的代码尚未补全 (Windows 路径未配置)");
-	process.exit(1);
+	SOURCE_DIR =
+		"C:\\Users\\23203\\Documents\\personal_knowledge_base\\WriterSide\\Writerside\\topics";
+	console.log("当前的环境为 Windows ");
 } else {
 	console.error(`❌ 不支持的操作系统: ${platform}`);
 	process.exit(1);

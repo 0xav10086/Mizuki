@@ -135,7 +135,7 @@ sudo pacman -S qemu-full virt-manager libvirt edk2-ovmf dnsmasq freerdp
     
 3. **重启 Windows**。
     
-![w-50%](./Resource/20260206211143.webp)
+![w-50%](./Resource/20260319192244.webp)
 #### **B. 注入 RDPApps.reg (开启远程应用模式)**
 
 1. 从 Arch 下载的 `winapps/oem` 目录下找到 `RDPApps.reg` 复制到虚拟机中。
@@ -199,7 +199,7 @@ MULTIMON="true"               # 多显示器支持开关
 RDP_FLAGS="/cert:ignore /gfx:avc420 /network:auto /drive:home,/home/av10086 /dynamic-resolution +clipboard /multimon:force"
 ```
 ### 我的配置
-![w-50%](./Resource/20260206211103.webp)
+![w-50%](./Resource/202603191922441.webp)
 ![w-50%](./Resource/20260206211407.webp)
 ```bash
 ❯ cat ~/.config/winapps/winapps.conf

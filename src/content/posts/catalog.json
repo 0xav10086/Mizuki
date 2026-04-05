@@ -4,6 +4,8 @@
 		{ "name": "how-to-use-github-actions.md", "show": true },
 		{ "name": "how-to-play-endfield-in-arch", "show": true },
 		{ "name": "how-to-use-office-in-arch.md", "show": true },
-		{ "name": "asyncio-异步编程.md", "show": true }
+		{ "name": "asyncio-异步编程.md", "show": true },
+		{ "name": "我的wezterm配置.md", "show": true },
+		{ "name": "云端配置托管与极速编译终极指南.md", "show": true }
 	]
 }
