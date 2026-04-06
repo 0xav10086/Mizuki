@@ -74,7 +74,7 @@ VPS 是部署的终点，必须配置好接收权限。
     
     - 手动创建目标目录：`mkdir -p /var/www/blog`。
         
-    - 配置 Nginx：将 `root` 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照[how-to-configuration-HTTPS](./how-to-configuration-HTTPS.html)这篇教程。
+    - 配置 Nginx：将 `root` 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照[how-to-configuration-HTTPS](/posts/how-to-configuration-HTTPS/)这篇教程。
 
 ### 详细的配置流程
 以下是详细的配置流程。请按顺序在 VPS 上检查：

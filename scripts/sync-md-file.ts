@@ -252,18 +252,28 @@ async function processImages(
 	return { content: newContent, processedImages };
 }
 
+// Wiki 链接处理函数
 function processWikiLinks(
 	content: string,
 	catalogFileNames: Set<string>,
 ): string {
 	const wikiLinkRegex = /(?<!!)\[\[([^\]]+)\]\]/g;
 	return content.replace(wikiLinkRegex, (match, linkText) => {
-		let fileName = linkText.split("|")[0].trim();
+		// 分离文件名和显示文字
+		let [fileName, displayText] = linkText.split("|");
+		fileName = fileName.trim();
 		if (!fileName.endsWith(".md")) fileName += ".md";
+
 		if (catalogFileNames.has(fileName)) {
-			const url = `./${fileName.replace(/\.md$/, ".html")}`;
-			return `[${linkText}](${url})`;
+			// 生成目标文章的 slug（去掉 .md 后缀）
+			const slug = fileName.replace(/\.md$/, "");
+			const encodedSlug = encodeURIComponent(slug);
+			// 根据你的博客实际 URL 结构，使用绝对路径 /posts/文章名/
+			const url = `/posts/${encodedSlug}/`;
+			const finalDisplay = displayText ? displayText.trim() : slug;
+			return `[${finalDisplay}](${url})`;
 		} else {
+			// 文档不存在，保留原文本（去掉括号）
 			return linkText;
 		}
 	});
