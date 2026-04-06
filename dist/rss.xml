@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Mizuki</title><description>One demo website</description><link>https://0xav10086.space/</link><language>zh_CN</language><item><title>我的wezterm配置</title><link>https://0xav10086.space/posts/%E6%88%91%E7%9A%84wezterm%E9%85%8D%E7%BD%AE/</link><guid isPermaLink="true">https://0xav10086.space/posts/%E6%88%91%E7%9A%84wezterm%E9%85%8D%E7%BD%AE/</guid><description>这个教程将会教你如何让Windows的终端更好用。</description><pubDate>Wed, 25 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;我的 WezTerm 配置归档&lt;/h1&gt;
 &lt;blockquote&gt;
-&lt;p&gt;本文档的内容与 &lt;a href=&quot;/posts/Windows10%E4%B8%AD%E6%9B%B4%E5%A5%BD%E7%94%A8%E7%9A%84%E5%8F%B3%E9%94%AE/&quot;&gt;Windows10中更好用的右键&lt;/a&gt;已相互关联&lt;/p&gt;
+&lt;p&gt;本文档的内容与 &lt;a href=&quot;/posts/windows10%E4%B8%AD%E6%9B%B4%E5%A5%BD%E7%94%A8%E7%9A%84%E5%8F%B3%E9%94%AE/&quot;&gt;Windows10中更好用的右键&lt;/a&gt;已相互关联&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2&gt;一、 核心概念：终端模拟器与 Shell 的关系&lt;/h2&gt;
 &lt;p&gt;要打造一个完美的命令行环境，首先要明确“壳”（终端）与“大脑”（Shell）的分工。&lt;/p&gt;
@@ -1344,7 +1344,7 @@ apt install certbot python3-certbot-nginx -y
 &lt;p&gt;手动创建目标目录：&lt;code&gt;mkdir -p /var/www/blog&lt;/code&gt;。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;配置 Nginx：将 &lt;code&gt;root&lt;/code&gt; 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照&lt;a href=&quot;/posts/how-to-configuration-HTTPS/&quot;&gt;how-to-configuration-HTTPS&lt;/a&gt;这篇教程。&lt;/p&gt;
+&lt;p&gt;配置 Nginx：将 &lt;code&gt;root&lt;/code&gt; 指向该目录，并使用 Certbot 开启 HTTPS。详细的配置过程可以参照&lt;a href=&quot;/posts/how-to-configuration-https/&quot;&gt;how-to-configuration-HTTPS&lt;/a&gt;这篇教程。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;

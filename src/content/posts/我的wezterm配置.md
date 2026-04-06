@@ -16,7 +16,7 @@ lang: zh-CN
 ---
 # 我的 WezTerm 配置归档
 
->本文档的内容与 [Windows10中更好用的右键](/posts/Windows10%E4%B8%AD%E6%9B%B4%E5%A5%BD%E7%94%A8%E7%9A%84%E5%8F%B3%E9%94%AE/)已相互关联
+>本文档的内容与 [Windows10中更好用的右键](/posts/windows10%E4%B8%AD%E6%9B%B4%E5%A5%BD%E7%94%A8%E7%9A%84%E5%8F%B3%E9%94%AE/)已相互关联
 
 ## 一、 核心概念：终端模拟器与 Shell 的关系
 
