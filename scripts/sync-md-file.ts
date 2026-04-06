@@ -257,23 +257,23 @@ function processWikiLinks(
 	content: string,
 	catalogFileNames: Set<string>,
 ): string {
+	// 匹配 [[...]]，排除图片 ![[...]]
 	const wikiLinkRegex = /(?<!!)\[\[([^\]]+)\]\]/g;
 	return content.replace(wikiLinkRegex, (match, linkText) => {
-		// 分离文件名和显示文字
+		// 分离文件名和显示文字（支持 [[文件名|显示文字]]）
 		let [fileName, displayText] = linkText.split("|");
 		fileName = fileName.trim();
 		if (!fileName.endsWith(".md")) fileName += ".md";
 
 		if (catalogFileNames.has(fileName)) {
-			// 生成目标文章的 slug（去掉 .md 后缀）
 			const slug = fileName.replace(/\.md$/, "");
 			const encodedSlug = encodeURIComponent(slug);
-			// 根据你的博客实际 URL 结构，使用绝对路径 /posts/文章名/
 			const url = `/posts/${encodedSlug}/`;
 			const finalDisplay = displayText ? displayText.trim() : slug;
+			// 关键：不要有任何多余空格或换行
 			return `[${finalDisplay}](${url})`;
 		} else {
-			// 文档不存在，保留原文本（去掉括号）
+			// 文件不存在，保留原文本（去掉双方括号）
 			return linkText;
 		}
 	});
